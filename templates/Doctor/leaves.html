@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaves</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/DwwykcV8Qyq46cDfL" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" />
+
+    <style>
+        .navbar-orange {
+            background-color: #008373;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            margin-left: 320px; /* Assuming sidebar width is 300px */
+            margin-top: 60px;
+            margin-right: 810px;
+        }
+
+        .form-container {
+            width: 100%;  
+            margin-top: 1px;
+            padding: 2px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            max-height: 80vh; /* Set a maximum height for independent scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .form-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+
+        .navbar-brand1 {
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+
+        .data-block {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .data-block:hover {
+            background-color: #14685e;
+        }
+
+        .timing-input {
+            width: 60px;
+            margin-bottom: 5px;
+        }
+
+        .table td {
+            padding: 10px;
+        }
+
+        .table th {
+            text-align: center;
+        }
+        .table td, .table th {
+            background-color: #ffffff; /* Set table cell background to white */
+            color: #000000; /* Set text color to black for contrast */
+        }
+
+        body {
+            background-color: #f0f2f5;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px; /* Adjusted margin for top alignment */
+            height: calc(100vh - 60px); /* Adjust for the fixed navbar height */
+        }
+
+        .leave-list {
+            width: 35%; /* Adjust as needed */
+            max-height: 100%; /* Set a maximum height for independent scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .leave-list::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+
+        .form-container {
+            width: 63%; /* Adjust as needed */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex-container">
+        <!-- Leave List -->
+        <div class="leave-list">
+            <form method="Post">
+                <div class="data-block1">
+                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                        <span class="navbar-brand1">All Leaves</span>
+                        <a class="navbar-brand1" href="#" id="addLeaveLink">
+                            <i class="fa-solid fa-plus"></i> Add
+                        </a>
+                    </div>
+                </div>
+                {% include "includes/message.html" %}
+                {% for block_data in leaves %}
+                <div class="data-block" data-leave-date="{{ block_data.1.leave_date }}">
+                    <p style="color: white; text-align: center; font-size: 18px;">{{ block_data.1.leave_date }}</p>
+                    <table class="table table-bordered mb-2">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Morning</th>
+                                <th>Afternoon</th>
+                                <th>Evening</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ block_data.1.day }}</td>
+                                <td class="timing-input-group">
+                                    <input type="number" class="timing-input" name="MorningStart" value="{{ block_data.1.start_time }}" readonly>
+                                    <input type="number" class="timing-input" name="MorningEnd" value="{{ block_data.1.end_time }}" readonly>
+                                </td>
+                                <td class="timing-input-group">
+                                    <input type="number" class="timing-input" name="AfternoonStart" value="{{ block_data.2.start_time }}" readonly>
+                                    <input type="number" class="timing-input" name="AfternoonEnd" value="{{ block_data.2.end_time }}" readonly>
+                                </td>
+                                <td class="timing-input-group">
+                                    <input type="number" class="timing-input" name="EveningStart" value="{{ block_data.3.start_time }}" readonly>
+                                    <input type="number" class="timing-input" name="EveningEnd" value="{{ block_data.3.end_time }}" readonly>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+            </form>
+        </div>
+        
+        <!-- Add Leave Form Container -->
+        <div class="form-container " id="addLeavePageContainer" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+
+        <!-- Update Leave Form Container -->
+        <div class="form-container" id="updateLeaveFormContainer" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- JavaScript for loading add leave form dynamically -->
+    <script>
+        document.getElementById('addLeaveLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            const container = document.getElementById('addLeavePageContainer');
+            const updateLeaveContainer = document.getElementById('updateLeaveFormContainer');
+
+            // Hide the update leave container if it's visible
+            updateLeaveContainer.style.display = 'none';
+            fetch('{% url "leavesystem" %}')
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    container.style.display = 'block';
+                })
+                .catch(error => console.warn('Error loading add leave form:', error));
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach click event listener to each data-block
+            const dataBlocks = document.querySelectorAll('.data-block');
+            dataBlocks.forEach(block => {
+                block.addEventListener('click', function() {
+                    const leaveDate = this.getAttribute('data-leave-date');
+                    const updateFormContainer = document.getElementById('updateLeaveFormContainer');
+                    const addLeaveContainer = document.getElementById('addLeavePageContainer');
+
+                    // Hide the add leave container if it's visible
+                    addLeaveContainer.style.display = 'none';
+                    
+                    fetch(`/DrishtisDesktop/updateleave/${leaveDate}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            updateFormContainer.innerHTML = html;
+                            updateFormContainer.style.display = 'block';
+                        })
+                        .catch(error => console.error('Error loading update leave form:', error));
+                });
+            });
+        });
+    </script>
+
+<script>
+    // Function to fetch timings based on selected date
+    function fetchTimings() {
+        // Get the selected date
+        const selectedDate = document.getElementById('leaveDate').value;
+
+        // Call your Django view using AJAX
+        $.ajax({
+            type: 'POST',
+            url: "{%url 'fetch_timings' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',  // Include the CSRF token
+                selectedDate: selectedDate,
+            },
+            success: function(response) {
+                console.log(response);
+                if ('timings' in response && response.timings.length > 0) {
+                    // Get the first entry in the timings array
+                    var timing = response.timings[0];
+
+                    // Dynamically populate the timings table with a single row
+                    var tableBody = document.getElementById('timingsTableBody');
+                    tableBody.innerHTML = ''; // Clear the existing content
+
+                    var row = tableBody.insertRow();
+                    var cellDay = row.insertCell(0);
+                    var cellMorning = row.insertCell(1);
+                    var cellAfternoon = row.insertCell(2);
+                    var cellEvening = row.insertCell(3);
+
+                    cellDay.innerHTML = timing.day;
+                    
+                    // Create a hidden input field to store the day value
+                    var dayInput = document.createElement('input');
+                    dayInput.type = 'hidden';
+                    dayInput.value = timing.day;
+                    dayInput.name = 'Day';  // Setting the name attribute for the hidden input
+
+                    cellDay.appendChild(dayInput);
+
+                    // Create input boxes for Morning
+                    var morningStartInput = document.createElement('input');
+                    morningStartInput.type = 'number';
+                    morningStartInput.value = timing.morning_start;
+                    morningStartInput.placeholder = 'Start';
+                    morningStartInput.required = true;
+                    morningStartInput.className = 'form-control custom-input-2';
+                    morningStartInput.name="MorningStart";
+
+                    var morningEndInput = document.createElement('input');
+                    morningEndInput.type = 'number';
+                    morningEndInput.value = timing.morning_end;
+                    morningEndInput.placeholder = 'End';
+                    morningEndInput.required = true;
+                    morningEndInput.className = 'form-control custom-input-2';
+                    morningEndInput.name="MorningEnd";
+
+                    // Append Morning input boxes to the cell
+                    cellMorning.appendChild(morningStartInput);
+                    cellMorning.appendChild(morningEndInput);
+
+                            // Create input boxes for Afternoon
+                    var afternoonStartInput = document.createElement('input');
+                    afternoonStartInput.type = 'number';
+                    afternoonStartInput.value = timing.afternoon_start;
+                    afternoonStartInput.placeholder = 'Start';
+                    afternoonStartInput.required = true;
+                    afternoonStartInput.className = 'form-control custom-input-2';
+                    afternoonStartInput.name = 'AfternoonStart';
+
+                    var afternoonEndInput = document.createElement('input');
+                    afternoonEndInput.type = 'number';
+                    afternoonEndInput.value = timing.afternoon_end;
+                    afternoonEndInput.placeholder = 'End';
+                    afternoonEndInput.required = true;
+                    afternoonEndInput.className = 'form-control custom-input-2';
+                    afternoonEndInput.name = 'AfternoonEnd';
+
+                    // Append Afternoon input boxes to the cell
+                    cellAfternoon.appendChild(afternoonStartInput);
+                    cellAfternoon.appendChild(afternoonEndInput);
+
+                    // Create input boxes for Evening
+                    var eveningStartInput = document.createElement('input');
+                    eveningStartInput.type = 'number';
+                    eveningStartInput.value = timing.evening_start;
+                    eveningStartInput.placeholder = 'Start';
+                    eveningStartInput.required = true;
+                    eveningStartInput.className = 'form-control custom-input-2';
+                    eveningStartInput.name = 'EveningStart';
+
+                    var eveningEndInput = document.createElement('input');
+                    eveningEndInput.type = 'number';
+                    eveningEndInput.value = timing.evening_end;
+                    eveningEndInput.placeholder = 'End';
+                    eveningEndInput.required = true;
+                    eveningEndInput.className = 'form-control custom-input-2';
+                    eveningEndInput.name = 'EveningEnd';
+
+                    // Append Evening input boxes to the cell
+                    cellEvening.appendChild(eveningStartInput);
+                    cellEvening.appendChild(eveningEndInput);
+
+                } else {
+                    // Handle the case when there's an error in the response or no data
+                    console.error('Error fetching timings:', response.error_message);
+                }
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+    }
+
+        
+    // Get the current date in the format "YYYY-MM-DD"
+    var currentDate = new Date().toISOString().split('T')[0];
+
+    // Set the minimum allowed date for the date input
+    document.getElementById('leaveDate').min = currentDate;
+    document.getElementById('toDate').min = currentDate;
+
+</script>
+{% endblock content %}
+</body>
+</html>
+

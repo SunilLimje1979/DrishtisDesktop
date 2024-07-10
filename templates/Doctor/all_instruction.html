@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Instructions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-orange {
+            background-color: #008373;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            margin-left: 320px;
+            margin-top: 60px;
+            margin-right: 810px;
+        }
+
+        .form-container {
+            width: 60%;
+            margin-top: 1px;
+            padding: 2px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .form-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .navbar-brand1 {
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+
+        .instruction-card {
+            background-color: #71d4c895;
+            border-radius: 10px;
+            margin-top: 5px;
+            padding: 7px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .instruction-info {
+            font-size: 16px;
+            color: #0c0c0d;
+        }
+
+         
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            height: calc(100vh - 60px);
+        }
+
+        .instruction-list {
+            width: 39%;
+            max-height: 100%;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .instruction-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .data-block1 .container-fluid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex-container">
+        <!-- Instruction List -->
+        <div class="instruction-list">
+            <form method="Post">
+                <div class="data-block1">
+                    <div class="container-fluid">
+                        <span class="navbar-brand1">All Instructions</span>
+                        <a class="navbar-brand1" href="#" id="addInstructionLink">
+                            <i class="fa-solid fa-plus"></i> Add
+                        </a>
+                    </div>
+                </div>
+                {% include "includes/message.html" %}
+                <!-- Search Bar -->
+                <div class="mb-2">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Instruction">
+                </div>
+                <!-- Instruction Cards -->
+                {% for data in all_data %}
+                <div class="instruction-card" data-instructionid="{{ data.doctor_instruction_id }}">
+                    <div class="instruction-info">{{ data.instruction_text }} - {{ data.instruction_language }}</div>
+                </div>
+                {% endfor %}
+            </form>
+        </div>
+
+        <!-- Add Instruction Form Container -->
+        <div class="form-container" id="addInstructionPageContainer" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+
+        <!-- Update Instruction Form Container -->
+        <div class="form-container" id="updateInstructionFormContainer" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <!-- JavaScript for loading add Instruction form dynamically -->
+    <script>
+        document.getElementById('addInstructionLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            const container = document.getElementById('addInstructionPageContainer');
+            const updateInstructionContainer = document.getElementById('updateInstructionFormContainer');
+
+            updateInstructionContainer.style.display = 'none';
+            fetch('{% url "insert_instruction" %}')
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    container.style.display = 'block';
+                })
+                .catch(error => console.warn('Error loading add Instruction form:', error));
+        });
+    </script>
+
+    <!-- JavaScript for dynamically loading update Instruction form -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const instructionCards = document.querySelectorAll('.instruction-card');
+            instructionCards.forEach(card => {
+                card.addEventListener('click', function(event) {
+                    if (event.target.tagName === 'I' && event.target.classList.contains('fa-trash')) {
+                        return;
+                    }
+
+                    const instructionId = this.getAttribute('data-instructionid');
+                    const updateFormContainer = document.getElementById('updateInstructionFormContainer');
+                    const addInstructionContainer = document.getElementById('addInstructionPageContainer');
+
+                    addInstructionContainer.style.display = 'none';
+
+                    fetch(`/DrishtisDesktop/update_instruction/${instructionId}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            updateFormContainer.innerHTML = html;
+                            updateFormContainer.style.display = 'block';
+                        })
+                        .catch(error => console.error('Error loading update Instruction form:', error));
+                });
+            });
+        });
+
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const instructionCards = document.querySelectorAll('.instruction-card');
+
+            instructionCards.forEach(function (card) {
+                const instructionText = card.querySelector('.instruction-info').textContent.toLowerCase();
+                if (instructionText.includes(searchValue)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}

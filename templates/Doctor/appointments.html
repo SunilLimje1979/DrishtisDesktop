@@ -1,0 +1,655 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% block content %}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointments</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css"/>
+
+    <!-- Custom Styles -->
+
+    <!-- jQuery DateTimePicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <style>
+        .navbar-orange {
+            background-color: #008373;
+            box-shadow: 0px 4px 8px;
+        }
+
+        .navbar-brand1 {
+            color: white;
+            font-size: 25px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 2%;
+            margin-right: 2%;
+            margin-bottom: 5px;
+
+        }
+
+        .label-row label {
+            font-size: 20px;
+            padding: 0px;
+            margin-bottom: 0%;
+            margin-top: 0%;
+            color: inherit;
+            text-decoration: none;
+    
+        }
+
+        .btn {
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        input[type="date"] {
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        a:hover {
+            color:#008373 ;
+        }
+
+        .icon {
+        font-size: 50px; /* Adjust the font size as needed */
+        }
+        .data-item{
+            background-color: #b2f5ee;
+            border-radius: 10px;
+            color: black;
+        }
+         /* Custom CSS for Appointment Statistics */
+        .card-body {
+            padding: 0; /* Adjust padding as needed */
+        }
+
+        .card-body p {
+            font-size: 16px; /* Adjust font size as needed */
+            margin-bottom: 0; /* Remove bottom margin to align with card layout */
+            margin-top: 0;
+        }
+
+        .card-body span {
+            font-weight: bold; /* Optionally apply bold font weight to statistic values */
+            color: #008373; /* Customize text color */
+        }
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        .form-container {
+            width: 68%;  
+            margin: 0;
+            margin-top: 1px;
+            padding: 2px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            max-height: 90vh; /* Set a maximum height for independent scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .form-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px; /* Adjusted margin for top alignment */
+            height: calc(100vh - 60px); /* Adjust for the fixed navbar height */
+            margin-left: 2px;
+            margin-right: 3px;
+        }
+
+        .appointment-list {
+            width: 32%; /* Adjust as needed */
+            max-height: 100%; /* Set a maximum height for independent scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .appointment-list::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+
+        /* hr{
+            margin: 5px 0 3px 0;
+            padding: 0;
+        } */
+
+    </style>
+</head>
+
+<body>
+    <div class="flex-container">
+        <!-- Appointment List -->
+        <div class="appointment-list">
+            <div class="data-block1">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <span class="navbar-brand1">Appointments</span>
+                    <input type="date" id="dateInput" name="dateInput" value="">
+                </div>
+            </div>
+            {% include "includes/message.html" %}
+
+            <div class="d-flex justify-content-between" style="margin-top: 3%;">
+                <button class="btn btn-primary filter-btn" data-status="1" style="margin-left:1%;margin-right: 1%;background-color: #008373;">Uncompleted</button>
+                <button class="btn btn-primary filter-btn" data-status="2" style="background-color: #008373;">Partially Completed</button>
+                <button class="btn btn-primary filter-btn" data-status="3" style="margin-right: 1%;margin-left: 1%;background-color: #008373;">Completed</button>
+            </div>
+            <!-- Add a new card block to display appointment stats -->
+            <div class="card mt-1 mb-2" style="margin: 0;">
+                <div class="card-body" style="padding-top: 0;padding-bottom: 0;padding-left: 0;">
+                    <h5 class="card-title" style="display: inline-block;">Appointments: </h5> <span id="totalAppointments"></span>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Display Appointment Statistics in a Single Line -->
+                            <p> 
+                            Pending: <span id="pendingAppointments"></span> &nbsp;&nbsp;
+                            Partially: <span id="partiallyCompletedAppointments"></span> &nbsp;&nbsp;
+                            Paid: <span id="paidAppointments"></span> &nbsp;
+                            Unpaid: <span id="completedAppointments"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if role == 'Doctor' %}
+            <div class="card" style="margin: 0;">
+                <div class="card-body" style="padding-top: 0;padding-bottom: 0;padding-left: 0;">
+                    <h5 class="card-title" style="display: inline-block;">Collection: </h5> <span id="totalAmount"></span>
+                    <div class="row"> 
+                        <div class="col-md-12">
+                            <p>
+                                Paid: <span id="paidAmount"></span>&nbsp;&nbsp;
+                                Unpaid: <span id="unpaidAmount"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%endif%}
+            <div id="data-container">
+                
+            </div>
+            
+            <!-- Placeholder message for no appointments -->
+            <div id="noAppointmentsMessage" style="display: none;">
+                <p style="font-size: 20px;margin-top: 10px;color: rgb(194, 198, 194); background-color: #008373;">No appointments found for Today</p>
+            </div>
+        </div>
+
+        <div class="form-container" id="opd" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+
+        <div class="form-container" id="infoContentContainer" style="display: none;"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+    
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+             // Declare the data variable outside the event listener function
+            // Get the current date and format it as 'YYYY-MM-DD'
+            var currentDate = new Date().toISOString().split('T')[0];
+            // Set the initial value of the date input
+            document.getElementById('dateInput').value = currentDate;
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const dataContainer = document.getElementById('data-container');
+            const role = "{{ role }}"; // Retrieve the role value passed from Django view
+            console.log('role',role);
+
+    
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const status = parseInt(this.getAttribute('data-status'));
+                    filterData(status);
+                });
+            });
+    
+            // Function to fetch data based on date
+            function fetchData(selectedDate) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "fetch_data" %}',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}', // Include the CSRF token
+                        selectedDate: selectedDate,
+                    },
+                    success: function (response) {
+                        // Handle the API response data
+                        updateData(response);
+                    }
+                });
+            }
+    
+            // Fetch data based on default date (today)
+            var currentDate = new Date().toISOString().split('T')[0];
+            fetchData(currentDate);
+    
+            // Event listener for date input change
+            $('#dateInput').on('change', function () {
+                var selectedDate = $(this).val();
+                fetchData(selectedDate);
+            });
+    
+            function filterData(status) {
+                    const dataItems = document.querySelectorAll('.data-item');
+                    let appointmentFound = false;
+
+                    dataItems.forEach(item => {
+                        if (status === 0 || parseInt(item.getAttribute('data-status')) === status || (status === 3 && (parseInt(item.getAttribute('data-status')) === 3 || parseInt(item.getAttribute('data-status')) === 4))) {
+                            item.style.display = 'block';
+                            appointmentFound = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    // Show "No appointments found" message if no appointments match the selected filter
+                    if (!appointmentFound) {
+                        const noAppointmentsMessage = document.getElementById('noAppointmentsMessage');
+                        noAppointmentsMessage.style.display = 'block';
+                    } else {
+                        const noAppointmentsMessage = document.getElementById('noAppointmentsMessage');
+                        noAppointmentsMessage.style.display = 'none';
+                    }
+                }
+             
+            // Function to update the data in the HTML
+            function updateData(data) {
+                if (data.length === 0) {
+                    // If no appointments are found, display the placeholder message
+                    document.getElementById('noAppointmentsMessage').style.display = 'block';
+                    // Hide the data container
+                    dataContainer.style.display = 'none';
+                } else {
+                // Assuming that data is an array of appointments
+                    const html = data.map(appointment => {
+                        const link = getAppointmentLink(appointment);
+                        
+                        return `
+                        
+                            <a href="${link}" class="appointment-link" data-id="${appointment.appointment_id}">
+                                 
+                                <div class="data-item" data-status="${appointment.appointment_status}">
+                                    <input type="hidden" name="appointment_id" value="${appointment.appointment_id}" />
+                                    <hr>
+                                    <div class="label-row">
+                                        <label for="label1" id="disabledLink" class="label-link"><i class="fa-solid fa-circle-info me-1" style=" font-size: 20px;cursor: pointer;" onclick="handleInfoIconClick(event)" data-appointment-id="${appointment.appointment_id}"></i>${appointment.appointment_name}</label>
+                                        <label for="label2" id="disabledLink" class="label-link"><i class="fa-solid fa-user-group" style="color: #008373;"></i> ${appointment.appointment_token}</label>
+                                         
+                                    </div>
+                                    <div class="label-row">
+                                        <div>
+                                        ${appointment.appointment_gender !== 0 ? `<label  for="label1"><i class="fa-solid fa-person-dress me-2" style="color: rgb(208, 91, 110); font-size: 30px;"></i></label>` : ''}
+                                        ${appointment.appointment_gender === 0 ? `<label  for="label1"><i class="fa-solid fa-person me-2" style="color: blue; font-size: 30px;"></i></label>` : ''}
+                                        ${appointment.age ? `<label for="label1">${appointment.age} years</label>` : ''}
+                                        
+                                        </div>
+                                        <div>
+                                        <label for="label2"><i class="fa-solid fa-phone me-2"></i>${appointment.appointment_mobileno}</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="label-row">
+                                        <div>
+                                        ${appointment.createdon !== null ? `
+                                            <label for="label1" id="disabledLink" class="label-link">${appointment.createdon}</label>
+                                        ` : ''}
+                                        </div>
+                                        <div>
+                                        <label for="label2" style="border-radius:7px;color:white;background-color: ${
+                                            appointment.appointment_status === 1 ? 'rgb(240, 53, 56)' :
+                                            (appointment.appointment_status === 2 ? 'rgb(240, 190, 53)' :
+                                            (appointment.appointment_status === 3 ? 'green' : 'green'))}">
+                                            ${appointment.appointment_status === 1 ? 'Uncompleted' :
+                                                (appointment.appointment_status === 2 ? 'Partially Completed' :
+                                                    // (appointment.appointment_status === 3 ? 'Completed' : ''))
+                                                    (appointment.appointment_status === 3 ? 'Completed' : (appointment.appointment_status === 4 ? 'Completed and Paid' : '')))}
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                         
+                    }).join('');
+                    // Set the updated HTML content
+                    dataContainer.innerHTML = html;
+                    dataContainer.style.display = 'block';
+                    // Hide the placeholder message
+                    document.getElementById('noAppointmentsMessage').style.display = 'none';
+                }
+            }
+             
+
+            function getAppointmentLink(appointment) {
+                if (appointment.appointment_status > 1 && role === 'Doctor') {
+                    return `/DrishtisDesktop/consultation/${appointment.appointment_id}`;
+                } else if (appointment.appointment_status >= 3 && role !== 'Doctor') {
+                    // Add your custom link for appointment_status === 3 and role is not 'Doctor'
+                    return `/DrishtisDesktop/for_user/${appointment.appointment_id}` ;
+                }else if (appointment.appointment_status === 2 && role !== 'Doctor') {
+                    return `/DrishtisDesktop/initial_assesment/${appointment.appointment_id}`;
+                    
+                }else {
+                    // return `/DoctorCollection/initial_assesment/${appointment.appointment_id}`;
+                    return `/DrishtisDesktop/patientselect/${appointment.appointment_id}`;
+                }
+            }
+        });
+
+        // Handle card link clicks to load content into the opd container
+        $(document).on('click', '.appointment-link', function (event) {
+            event.preventDefault();
+            const infoContentContainer = document.getElementById('infoContentContainer');
+            infoContentContainer.style.display = 'none';
+            const url = $(this).attr('href');
+            loadContent(url);
+        });
+
+        function loadContent(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    $('#opd').html(data).show();
+                    initializeConsultationScripts();
+                },
+                error: function () {
+                    $('#opd').html('<p>Error loading content.</p>').show();
+                }
+            });
+        }
+
+         // Function to initialize consultation-related scripts
+    function initializeConsultationScripts() {
+        const medicineSelect = document.getElementById('medicineSelect');
+        const modeField = document.getElementById('modeField');
+        const daysField = document.getElementById('daysField');
+        const dosagesField = document.getElementById('dosagesField');
+        const languageSelect = document.getElementById('languageSelect');
+        const instructionsSelect = document.getElementById('instructionsSelect');
+        const addMedicineBtn = document.getElementById('addMedicineBtn');
+        const medicineTableBody = document.getElementById('medicineTableBody');
+        const Medicine_input = document.getElementById('Medicine_input');
+        const Mode_input = document.getElementById('Mode_input');
+        const Days_input = document.getElementById('Days_input');
+        const Dosage_input = document.getElementById('Dosage_input');
+        const Language_input = document.getElementById('Language_input');
+        const Instructions_input = document.getElementById('Instructions_input');
+
+        // Initialize hidden fields with existing medicine list data
+        updateHiddenInputValues();
+
+        // Event listener for when a medicine is selected
+        $('#medicineSelect').on('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const form = selectedOption.getAttribute('data-form');
+            const duration = selectedOption.getAttribute('data-duration');
+            const dosages = selectedOption.getAttribute('data-dosages');
+
+            // Update fields in the form based on selected medicine
+            modeField.value = getModeLabel(form);
+            daysField.value = duration;
+            dosagesField.value = dosages;
+        });
+
+        // Event listener for adding medicine
+        addMedicineBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            const selectedMedicine = medicineSelect.value;
+            const selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
+            const mode = selectedOption.getAttribute('data-form'); // Get mode from selected option
+            const days = daysField.value;
+            const dosage = dosagesField.value;
+            const instructions = instructionsSelect.value;
+            const instructionsText = instructionsSelect.options[instructionsSelect.selectedIndex].text;
+
+            // Add row to the medicine table
+            const newRow = medicineTableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${selectedMedicine}</td>
+                <td>${getModeLabel(mode)}</td>
+                <td>${days}</td>
+                <td>${dosage}</td>
+                <td data-instruction-id="${instructions}">${instructionsText}</td>
+                <td><button class="btn btn-danger btn-sm removeBtn">Remove</button></td>
+            `;
+
+            // Update hidden input values after adding medicine
+            updateHiddenInputValues();
+
+            // Clear the form fields after adding medicine
+            resetForm();
+        });
+
+        // Event delegation to handle remove button clicks
+        medicineTableBody.addEventListener('click', (event) => {
+            if (event.target.classList.contains('removeBtn')) {
+                const row = event.target.closest('tr');
+                medicineTableBody.removeChild(row);
+
+                // Update hidden input values after removal
+                updateHiddenInputValues();
+            }
+        });
+
+        // Function to update hidden input values after adding/removing a row
+        function updateHiddenInputValues() {
+            const medicineRows = Array.from(medicineTableBody.getElementsByTagName('tr'));
+            const medicines = [];
+            const modes = [];
+            const days = [];
+            const dosages = [];
+            const instructions = [];
+
+            medicineRows.forEach(row => {
+                const cells = row.cells;
+                medicines.push(cells[0].textContent);
+                modes.push(getModeValue(cells[1].textContent));
+                days.push(cells[2].textContent);
+                dosages.push(cells[3].textContent);
+                instructions.push(cells[4].getAttribute('data-instruction-id')); // Get instruction ID from the 5th cell
+            });
+
+            // Join arrays into comma-separated strings and update hidden fields
+            Medicine_input.value = medicines.join(',');
+            Mode_input.value = modes.join(',');
+            Days_input.value = days.join(',');
+            Dosage_input.value = dosages.join(',');
+            Language_input.value = languageSelect.value;
+            Instructions_input.value = instructions.join(',');
+        }
+
+        // Helper functions
+        // Function to get mode label based on mode value
+        function getModeLabel(value) {
+            switch (value) {
+                case '1':
+                    return 'Tab';
+                case '2':
+                    return 'Syp';
+                case '3':
+                    return 'Pwd';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Function to get mode value based on mode label
+        function getModeValue(label) {
+            label = label.trim(); // Trim whitespace from the label
+            switch (label) {
+                case 'Tab':
+                    return 1;
+                case 'Syp':
+                    return 2;
+                case 'Pwd':
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+
+        function resetForm() {
+            medicineSelect.value = '';
+            modeField.value = '';
+            daysField.value = '';
+            dosagesField.value = '';
+            instructionsSelect.value = '';
+            languageSelect.value = '';
+        }
+    }
+
+        // Define handleInfoIconClick function in a global scope
+        const handleInfoIconClick = (event) => {
+                const opd = document.getElementById('opd');
+                opd.style.display = 'none';
+                event.preventDefault(); // Prevent default link behavior
+                event.stopPropagation(); // Stop event propagation
+                const appointmentId = event.target.dataset.appointmentId; // Get appointment_id from the clicked element's dataset
+                console.log(appointmentId);
+                // Implement custom logic for the info icon click here (e.g., redirect to another page)
+                // window.location.href = `/DrishtisDesktop/patient_history/${appointmentId}`; 
+                // Fetch HTML content using AJAX
+                $.ajax({
+                    url: `/DrishtisDesktop/patient_history/${appointmentId}`, // URL to fetch HTML content
+                    type: 'GET', // Assuming you're fetching a simple HTML content
+                    success: function (response) {
+                        // Display fetched content in the placeholder container
+                        $('#infoContentContainer').html(response).show();
+                    },
+                    error: function () {
+                        // Handle errors if any
+                        $('#infoContentContainer').html('<p>Error loading content.</p>').show();
+                    }
+                });
+            };
+    </script>
+
+
+
+<script>
+    // Function to calculate and update appointment and collection statistics
+    function updateStats(data) {
+        const totalAppointments = data.length;
+        const completedAppointments = data.filter(appointment => appointment.appointment_status === 3).length;
+        const paidAppointments = data.filter(appointment => appointment.appointment_status === 4).length;
+        const pendingAppointments = data.filter(appointment => appointment.appointment_status === 1).length;
+        const partiallyCompletedAppointments = data.filter(appointment => appointment.appointment_status === 2).length;
+
+        // Update appointment statistics in the HTML
+        document.getElementById('totalAppointments').textContent = totalAppointments;
+        document.getElementById('completedAppointments').textContent = completedAppointments;
+        document.getElementById('paidAppointments').textContent = paidAppointments;
+        document.getElementById('pendingAppointments').textContent = pendingAppointments;
+        document.getElementById('partiallyCompletedAppointments').textContent = partiallyCompletedAppointments;
+        const role = "{{ role }}";
+        if (role === 'Doctor') {
+            // Calculate collection-related statistics
+                const totalAmount = data.reduce((total, appointment) => {
+                    if (appointment.appointment_status === 3 || appointment.appointment_status === 4) {
+                        return total + parseFloat(appointment.consult_fee);
+                    } else {
+                        return total;
+                    }
+                }, 0);
+
+                const paidAmount = data.reduce((total, appointment) => {
+                    if (appointment.appointment_status === 4) {
+                        return total + parseFloat(appointment.consult_fee);
+                    } else {
+                        return total;
+                    }
+                }, 0);
+
+                const unpaidAmount = data.reduce((total, appointment) => {
+                    if (appointment.appointment_status === 3) {
+                        return total + parseFloat(appointment.consult_fee);
+                    } else {
+                        return total;
+                    }
+                }, 0);
+
+                // Update collection statistics in the HTML
+                document.getElementById('totalAmount').textContent = totalAmount.toFixed(2); // Display total amount
+                document.getElementById('paidAmount').textContent = paidAmount.toFixed(2); // Display paid amount
+                document.getElementById('unpaidAmount').textContent = unpaidAmount.toFixed(2); // Display unpaid amount
+
+        }
+         
+    }
+
+    // Function to fetch data based on selected date
+    function fetchData(selectedDate) {
+        $.ajax({
+            type: 'POST',
+            url: '/DrishtisDesktop/fetch_data/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                selectedDate: selectedDate,
+            },
+            success: function (response) {
+                updateStats(response); // Update appointment and collection stats
+            }
+        });
+    }
+
+    // Event listener for date input change
+    $('#dateInput').on('change', function () {
+        var selectedDate = $(this).val();
+        fetchData(selectedDate);
+    });
+
+    // Initial fetch for current date on page load
+    var currentDate = new Date().toISOString().split('T')[0];
+    fetchData(currentDate);
+</script>
+
+
+</body>
+
+</html>
+{% endblock content %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabs Example</title>
+    <style>
+        .tab {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            margin-right: 5px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        .active-tab {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="tab" onclick="toggleTab('content1')">Assessment</div>
+        <div class="tab" onclick="toggleTab('content2')">Consultation</div>
+        <div class="tab" onclick="toggleTab('content3')">Medicine</div>
+        <div class="tab" onclick="toggleTab('content4')">Lab</div>
+    </div>
+
+    <div id="content1" class="tab-content">Content for Tab 1</div>
+    <div id="content2" class="tab-content">Content for Tab 2</div>
+    <div id="content3" class="tab-content">Content for Tab 3</div>
+    <div id="content4" class="tab-content">Content for Tab 4</div>
+
+    <script>
+        function toggleTab(contentId) {
+            var contents = document.getElementsByClassName('tab-content');
+            var tabs = document.getElementsByClassName('tab');
+
+            for (var i = 0; i < contents.length; i++) {
+                if (contents[i].id === contentId) {
+                    if (contents[i].style.display === 'block') {
+                        contents[i].style.display = 'none';
+                        tabs[i].classList.remove('active-tab');
+                    } else {
+                        contents[i].style.display = 'block';
+                        tabs[i].classList.add('active-tab');
+                    }
+                } else {
+                    contents[i].style.display = 'none';
+                    tabs[i].classList.remove('active-tab');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
