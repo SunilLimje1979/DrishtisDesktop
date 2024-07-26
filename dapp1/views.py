@@ -148,7 +148,7 @@ def DoctorReg(request):
             cities = (city_response.json().get("message_data", [])).get('cities',[])
             # print(cities)
             request.session['doctor_id']=None
-            return render(request,"Doctor/DoctorReg.html",{"doctor_id":None,"countries": countries,"states": states,"cities": cities})
+            return render(request,"Doctor/doctorReg.html",{"doctor_id":None,"countries": countries,"states": states,"cities": cities})
     
     else:
         # form_data=request.POST
