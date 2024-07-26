@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+ <html lang="en">
+ 
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Scrollable Cards with Register Button</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" />
+     <style>
+         body {
+             background-color: #f8f9fa;
+             font-family: 'Poppins', sans-serif;
+         }
+ 
+         .navbar-orange {
+             background-color: #008373;
+             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+         }
+ 
+         .navbar-brand {
+             color: #FFFFFF;
+             font-size: 20px;
+         }
+ 
+         .cards-container {
+             display: flex;
+             overflow-x: auto;
+             padding: 10px 5px;
+             gap: 10px;
+             min-height: calc(100vh - 110px); /* Adjusting height minus navbar height */
+         }
+ 
+         .card {
+             background-color: #008373;
+             border-radius: 10px;
+             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+             padding: 10px;
+             flex: 0 0 300px;
+             display: flex;
+             flex-direction: column;
+             justify-content: space-between;
+             color: white;
+             flex-grow: 1; /* Ensuring cards grow to fill container */
+             position: relative;
+             height: auto; /* Ensure height is managed automatically */
+         }
+ 
+         .card-content {
+             flex-grow: 1;
+         }
+ 
+         .card h2, .card h3 {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 5px;
+         }
+ 
+         .card ul {
+             padding-left: 20px;
+         }
+ 
+         .card ul li {
+             font-size: 14px;
+             line-height: 1.5;
+             margin-bottom: 8px;
+         }
+ 
+         .btn-register {
+             background-color:#008373;
+             color:white;
+             border: none;
+             padding: 10px 20px;
+             border-radius: 5px;
+             cursor: pointer;
+             text-align: center;
+             margin-top: 0px;
+         }
+ 
+         .btn-register:hover {
+            background-color: #0c6e5d;
+         }
+ 
+         .register-button-container {
+             display: flex;
+             justify-content: center;
+             margin:0;
+         }
+     </style>
+ </head>
+ 
+ <body>
+     <!-- Navigation Bar -->
+     <nav class="navbar navbar-expand-lg navbar-light navbar-orange fixed-top">
+         <div class="container-fluid">
+             <a class="navbar-brand" href="#">OPD/IPD Management Software (AV Mediline OIMS)</a>
+         </div>
+     </nav>
+ 
+     <div class="container" style="margin-top: 56px;">
+         <div class="cards-container">
+             <div class="card">
+                 <div class="card-content">
+                     <h2>Highlights: <i class="fa-solid fa-star"></i></h2>
+                     <ul>
+                         <li>OPD Appointment Chatbot Free</li>
+                         <li>Clinic / Hospital Organisational Branding</li>
+                         <li>Fully Customizable Prescription PDF</li>
+                         <li>Prefilled Medicine and Other Master data with ICD 11</li>
+                         <li>Centralised Patient Data with Backups options</li>
+                         <li>Web Login as well as Mobile/Tablet Friendly Native App</li>
+                         <li>OMNI channels integrated</li>
+                         <li>WhatsApp Integration Option</li>
+                         <li>Biometric/Fingerprint Integration</li>
+                         <li>Extension for government health scheme with health id</li>
+                         <li>Operational in Online/Offline and On Premises Modes</li>
+                         <li>Supports Both Cloud Server or Local Server Architecture</li>
+                         <li>Help Videos and Tutorials, Remote Support</li>
+                     </ul>
+                 </div>
+             </div>
+             <div class="card">
+                 <div class="card-content">
+                     <h3>Features of OIMS: <i class="fa-solid fa-feather-pointed"></i></h3>
+                     <ul>
+                         <li>OPD Appointments Bot</li>
+                         <li>OPD Initial Assessment</li>
+                         <li>Online/Offline Consultation</li>
+                         <li>Prescription Management</li>
+                         <li>Billing and Payments</li>
+                         <li>Electronic Health Data</li>
+                         <li>Patient Timeline</li>
+                         <li>Reception Desk Login</li>
+                         <li>Compounder Login</li>
+                         <li>Assistance Doctor Logins</li>
+                     </ul>
+                 </div>
+             </div>
+             <div class="card">
+                 <div class="card-content">
+                     <h3>Advance Features: <i class="fa-solid fa-star-of-life"></i></h3>
+                     <ul>
+                         <li>Web & Mobile Interface</li>
+                         <li>Prefilled Masters</li>
+                         <li>Medicine Data</li>
+                         <li>Fully Customizable</li>
+                         <li>WhatsApp Integrated</li>
+                         <li>ICD 11 Integrated</li>
+                         <li>Health Id connected</li>
+                         <li>Complete Cloud Based</li>
+                         <li>UPCOMING: IPD for Hospitals/Daycare Units</li>
+                     </ul>
+                 </div>
+             </div>
+             <div class="card">
+                 <div class="card-content">
+                     <h2>Useful For: <i class="fa-solid fa-bolt"></i></h2>
+                     <ul>
+                         <li>Individual Practice Clinics General Physician, Clinics, Individual Practitioners</li>
+                         <li>Shared Practice Clinics Multi-speciality OPD Center & Clinics</li>
+                         <li>OPD with Daycare IPD OPD with Small IPD or Daycare units</li>
+                         <li>OPD/IPD Hospital Model Hospitals with OPD and IPD for patient care with intensive care units and operation theaters</li>
+                     </ul>
+                 </div>
+             </div>
+         </div>
+         <div class="register-button-container">
+             <button class="btn-register" onclick="location.href='/DrishtisDesktop/DoctorReg/'">Register Now</button>
+         </div>
+     </div>
+ 
+     {% include "includes/footer.html" %}
+ 
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+     </script>
+ </body>
+ 
+</html>
+ 

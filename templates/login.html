@@ -35,16 +35,18 @@
                             <form action="" method="POST">
                                 {% csrf_token %}
                                 <div class="form-group">
-                                    <input class="form-control" type="text" placeholder="Mobile Number" name="username">
+                                    <input class="form-control" type="text" placeholder="Mobile Number" name="mobileno" required>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" type="Password" placeholder="Password" name="pass1">
+                                    <input class="form-control" type="Password" placeholder="Password" name="password" required>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary btn-block" style="background-color: #008373;"  type="submit">Login</button>
                                 </div>
                             </form>
-                            <div class="text-center forgotpass"><a href="forgot-password.html">Forgot Password?</a>
+                            <!-- <div class="text-center forgotpass"><a href="forgot-password.html">Forgot Password?</a>
+                            </div> -->
+                            <div class="text-center forgotpass"><a href="{% url 'planinfo' %}">New User SignUp</a>
                             </div>
 
                             

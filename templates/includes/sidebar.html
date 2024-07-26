@@ -17,6 +17,7 @@
                 <a href="{% url 'get_all_doctor_appointments' %}"><i class="fas fa-stethoscope"></i> <span>OPD</span></a>
             </li>
 
+{% if request.session.role == 'Doctor' %}
 {% comment %} ##################################### Patient ############################################### {% endcomment %}
             <li class="{% active_link 'all_patient' %}">
                 <a href="{% url 'all_patient' %}"><i class="fas fa-user-injured"></i> <span>Patient</span></a>
@@ -53,7 +54,7 @@
                 </ul>
             </li>
 
-             
+{%endif%}   
              
         </ul>
         </div>

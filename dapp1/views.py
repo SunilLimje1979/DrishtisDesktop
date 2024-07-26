@@ -18,6 +18,7 @@ import os
 import uuid
 from django.template.loader import render_to_string
 
+
 # Create your views here.
 leave_data=0
 
@@ -36,40 +37,53 @@ data1 = []
 patient_info = []
 consultation =[]
 
+
+
+def generate_random_string():
+    # Generate a UUID
+    random_uuid = uuid.uuid1()
+    # Convert to a string and remove the hyphens
+    custom_uuid = random_uuid.hex[:32]
+    return custom_uuid
+
+
 def login(request):
     if(request.method=='GET'):
         return render(request,'login.html')
     else:
-        username = request.POST['username']
-        token= request.POST['pass1']
-        print(username,token)
-        api_data={"doctor_login_token":token}
-    #api_url=" http://127.0.0.1:8002/doctor/api/get_doctor_profileby_token/"
-    api_url="http://13.233.211.102/doctor/api/get_doctor_profileby_token/"
-    response=requests.post(api_url,json=api_data)
-    if(response.json().get("message_code") ==999):
         request.session.clear()
-        # request.session['token']=token
-        messages.error(request, "Invalid username or password")
-        return redirect(login)
-    else:
-        print(response.text)
-        doctor_id=response.json().get("message_data").get("doctor_id")
-        role=response.json().get("message_text")
-        request.session['role']=role
-        api_data={"doctor_id":doctor_id}
-        # api_url="http://127.0.0.1:8000/api/get_doctor_related_info/"
-        api_url="http://13.233.211.102/doctor/api/get_doctor_related_info/"
+        mobileno = request.POST['mobileno']
+        password= request.POST['password']
+        print(mobileno,password)
+        api_data={"mobile_number":mobileno,"password":password}
+        #api_url=" http://127.0.0.1:8002/doctor/api/get_doctor_profileby_token/"
+        # api_url="http://13.233.211.102/doctor/api/get_doctor_profileby_token/"
+        api_url="http://13.233.211.102/doctor/api/login_desktop/"
         response=requests.post(api_url,json=api_data)
-        all_id=response.json()
-        print(all_id)
-        request.session['doctor_id']=doctor_id
-        request.session['location_id']=all_id.get('doctor_location_id')
-        request.session['avalibility_id']=all_id.get('last_availability_id')
-        request.session['medic_id']=all_id.get('last_medical_service_fee_id')
-        request.session['consult_id']=all_id.get('last_consultation_fee_id')
-        request.session.save()
-        return redirect(index)
+        print(response.text)
+        if(response.json().get("message_code") ==999):
+            request.session.clear()
+            # request.session['token']=token
+            messages.error(request, "Invalid username or password")
+            return redirect(login)
+        else:
+            print(response.text)
+            doctor_id=response.json().get("message_data").get("doctor_id")
+            role=response.json().get("message_text")
+            request.session['role']=role
+            api_data={"doctor_id":doctor_id}
+            # api_url="http://127.0.0.1:8000/api/get_doctor_related_info/"
+            api_url="http://13.233.211.102/doctor/api/get_doctor_related_info/"
+            response=requests.post(api_url,json=api_data)
+            all_id=response.json()
+            print(all_id)
+            request.session['doctor_id']=doctor_id
+            request.session['location_id']=all_id.get('doctor_location_id')
+            request.session['avalibility_id']=all_id.get('last_availability_id')
+            request.session['medic_id']=all_id.get('last_medical_service_fee_id')
+            request.session['consult_id']=all_id.get('last_consultation_fee_id')
+            request.session.save()
+            return redirect(index)
 
 def index(request):
     return render(request, 'index.html', context={})
@@ -77,22 +91,29 @@ def base(request):
     return render(request, 'base.html', context={})
 
 def Logout(request):
+    request.session.clear()
+    messages.success(request, "You have successfully signed out")
+    return redirect(login)
+
     return HttpResponse("logout")
 
-def unit_list(request):
-       return HttpResponse("hello")
+def planinfo(request):
+    request.session.clear()
+    return render(request,'Doctor/planinfo.html')
 
-def unit_add(request):
-        return HttpResponse("hello world")
 
 def DoctorReg(request):
     if(request.method=="GET"):
-        # request.session['doctor_id'] =26
-        # request.session['role']='Doctor'
+        # request.session['doctor_id'] =1
         # doctor_id=request.session['doctor_id']
         # print(request.session['doctor_id'])
         # request.session.clear()
-        if 'doctor_id' in request.session:
+        # Fetch countries, states, and cities
+        country_response = requests.post("http://13.233.211.102/masters/api/get_all_countries/")
+        countries = country_response.json().get("message_data", [])
+        # print(countries)
+
+        if 'doctor_id' in request.session and 'role' in request.session :
             if(request.session['role']=='Doctor'):
                 doctor_id=request.session['doctor_id']
                 api_data={"doctor_id":doctor_id}
@@ -108,14 +129,31 @@ def DoctorReg(request):
                 formatted_date=datetime.datetime.fromtimestamp(epoch_timestamp).strftime( "%Y-%m-%d")   
                 # print(formatted_date)
                 data[0]['doctor_dateofbirth'] = formatted_date
-                return render(request,"Doctor/DoctorRegUpdate.html",{"data":data[0],'doctor_id':doctor_id})
+                state_response = requests.post("http://13.233.211.102/masters/api/get_states_by_country_id/",json={"country_id":data[0]['doctor_countryid']})
+                states = (state_response.json().get("message_data", [])).get('states',[])
+                # print(states)
+
+                city_response = requests.post("http://13.233.211.102/masters/api/get_cities_by_state_id/",json={"state_id":data[0]['doctor_stateid']})
+                cities = (city_response.json().get("message_data", [])).get('cities',[])
+                # print(cities)
+                return render(request,"Doctor/DoctorRegUpdate.html",{"data":data[0],'doctor_id':doctor_id,"countries": countries,"states": states,"cities": cities})
             else:
-                return HttpResponse("not allowed")
+                return redirect(base)
         else:
+            state_response = requests.post("http://13.233.211.102/masters/api/get_states_by_country_id/",json={"country_id":101})
+            states = (state_response.json().get("message_data", [])).get('states',[])
+            # print(states)
+
+            city_response = requests.post("http://13.233.211.102/masters/api/get_cities_by_state_id/",json={"state_id":22})
+            cities = (city_response.json().get("message_data", [])).get('cities',[])
+            # print(cities)
             request.session['doctor_id']=None
-            return render(request,"Doctor/DoctorRegUpdate.html",{"doctor_id":None})
+            return render(request,"Doctor/DoctorReg.html",{"doctor_id":None,"countries": countries,"states": states,"cities": cities})
     
     else:
+        # form_data=request.POST
+        # print(form_data)
+        # return HttpResponse("else part of Doctor Reg")
         doctor_id= request.session['doctor_id']
         fname=request.POST['firstName']
         lname=request.POST['lastName']
@@ -131,6 +169,7 @@ def DoctorReg(request):
         gender=request.POST["gender"]
         email=request.POST["email"]
         mno=request.POST["mobileNumber"]
+        password=request.POST['password']
         api_data={
                 "doctor_firstname": fname,
                 "doctor_lastname": lname,
@@ -141,15 +180,15 @@ def DoctorReg(request):
                 "doctor_gender":gender,
                 "doctor_aadharnumber": aadharNumber,
                 "doctor_address": address,
-                "doctor_cityid": 1,
-                "doctor_stateid": 1,
-                "doctor_countryid": 1,
+                "doctor_cityid": city,
+                "doctor_stateid": state,
+                "doctor_countryid": country,
                 "doctor_pincode": pincode,
                 "doctor_registrationno": regno,
                 "isactive": 1,
+                "password":password,
                 # "doctor_login_token":request.session['token']
             }
-        print(api_data)
         # print(dob)
         if doctor_id is not None :
             update_data={
@@ -163,7 +202,10 @@ def DoctorReg(request):
             return redirect(DoctorReg)
         
         else:
-            api_data['doctor_login_token']=request.session['token']
+            #print('token',request.session['token'])
+            api_data['doctor_login_token']=generate_random_string()
+            print(api_data['doctor_login_token'])
+            # return HttpResponse("else part of else")
             # api_url = "http://127.0.0.1:8000/api/insert_doctor/"
             api_url = "http://13.233.211.102/doctor/api/insert_doctor/"
 
@@ -183,15 +225,35 @@ def DoctorReg(request):
             else:
                 return HttpResponse(f"Failed to store data in the Database. API response: {response.text}")
 
+def get_states(request):
+    country_id = request.GET.get('country_id')
+    print(country_id)
+    state_response = requests.post("http://13.233.211.102/masters/api/get_states_by_country_id/",json={"country_id":country_id})
+    states = (state_response.json().get("message_data", [])).get('states',[])
+
+    return JsonResponse(states, safe=False)
+
+def get_cities(request):
+    state_id = request.GET.get('state_id')
+    print(state_id)
+    city_response = requests.post("http://13.233.211.102/masters/api/get_cities_by_state_id/",json={"state_id":state_id})
+    cities = (city_response.json().get("message_data", [])).get('cities',[])
+    return JsonResponse(cities, safe=False)
+
+
 
 def addClinic(request):
     if(request.method=='GET'):
-        # request.session['location_id'] =28
+        # request.session['location_id'] =5
         # location_id=request.session['location_id']
         # doctor_id=request.session['doctor_id']
         # print(location_id)
         # request.session['location_id']=20
         # del request.session['location_id']
+        country_response = requests.post("http://13.233.211.102/masters/api/get_all_countries/")
+        countries = country_response.json().get("message_data", [])
+        # print(countries)
+
         if 'location_id' in request.session:
             location_id=request.session['location_id']
             print(location_id)
@@ -212,10 +274,25 @@ def addClinic(request):
 
             # Update the value in 'data' dictionary
             data[0]['location_image'] = "https://www.drishtis.app/doctor"+updated_link
-            return render(request,"Doctor/clinicaddandupdate.html",{"data":data[0],'location_id':location_id,"timestamp": timestamp})
+
+            state_response = requests.post("http://13.233.211.102/masters/api/get_states_by_country_id/",json={"country_id":data[0]['location_country_id']})
+            states = (state_response.json().get("message_data", [])).get('states',[])
+            # print(states)
+
+            city_response = requests.post("http://13.233.211.102/masters/api/get_cities_by_state_id/",json={"state_id":data[0]['location_state_id']})
+            cities = (city_response.json().get("message_data", [])).get('cities',[])
+            # print(cities)
+            return render(request,"Doctor/clinicaddandupdate.html",{"data":data[0],'location_id':location_id,"timestamp": timestamp,"countries": countries,"states": states,"cities": cities})
         else:
+            state_response = requests.post("http://13.233.211.102/masters/api/get_states_by_country_id/",json={"country_id":101})
+            states = (state_response.json().get("message_data", [])).get('states',[])
+            # print(states)
+
+            city_response = requests.post("http://13.233.211.102/masters/api/get_cities_by_state_id/",json={"state_id":22})
+            cities = (city_response.json().get("message_data", [])).get('cities',[])
+            # print(cities)
             request.session['location_id']=None
-            return render(request,"Doctor/clinicaddandupdate.html",{"location_id":None})
+            return render(request,"Doctor/clinic.html",{"location_id":None,"countries": countries,"states": states,"cities": cities})
     
     else:
         clinicname=request.POST['clinicName']
@@ -238,14 +315,15 @@ def addClinic(request):
                 "location_address": address,
                 "location_latitute": latitude,
                 "location_longitute": longitude,
-                "location_city_id": 1,
-                "location_state_id": 1,
-                "location_country_id": 1,
+                "location_city_id": city,
+                "location_state_id": state,
+                "location_country_id": country,
                 "location_pincode":pincode,
                 "location_status": 1,  #bydefault 1 means active
                 # "isdeleted":0 #bydefault put 0 later update the api.
             }
-        
+         
+        # return HttpResponse("clinic else")
         if location_id is not None :
             print("new Logo: ",clinic_logo)
             api_data['doctor_location_id']=location_id
@@ -281,14 +359,16 @@ def addClinic(request):
                 except Exception as e:
                     return HttpResponse(f"Error: {str(e)}")
 
-            else:
-                return HttpResponse("No file uploaded.")
+            # else:
+            #     return HttpResponse("No file uploaded.")
             api_data['doctor_id']=request.session['doctor_id']
             print(api_data['doctor_id'])
             # api_url = "http://127.0.0.1:8000/api/insert_doctor_location/"
             api_url = "http://13.233.211.102/doctor/api/insert_doctor_location/"
-
-            response = requests.post(api_url, data=api_data, files={'location_image': (new_filename, renamed_file)})
+            if(clinic_logo):
+                response = requests.post(api_url, data=api_data, files={'location_image': (new_filename, renamed_file)})
+            else:
+                response= requests.post(api_url, json=api_data)
             print(response.text)
             api_response = response.json()
             print(api_response)
@@ -306,10 +386,12 @@ def addClinic(request):
 
 
 
+
 def addSlot(request):
     if(request.method=='GET'):
         # request.session['avalibility_id']=71
         # avalibility_id=request.session['avalibility_id']
+        # request.session.clear()
         data={}
         if 'avalibility_id' in request.session:
             avalibility_id=request.session['avalibility_id']-20
@@ -326,9 +408,11 @@ def addSlot(request):
             return render(request, 'Doctor/slotsaddandupdate.html',{"data":data,'avalibility_id':avalibility_id})
         else:
             request.session['avalibility_id']=None
-            return render(request,"Doctor/slotsaddandupdate.html",{"avalibility_id":None})
+            return render(request,"Doctor/doctorAvalibility.html",{"avalibility_id":None})
     
     else:
+         
+        # return HttpResponse('else part of addslot')
         avalibility_id=request.session['avalibility_id']
         print(avalibility_id)
         if avalibility_id is not None :
@@ -430,6 +514,7 @@ def consultaion_fee(request):
     if(request.method=='GET'):
         # del request.session['consult_id']
         # del request.session['medic_id']
+        # request.session.clear()
         consult_data={}
         medic_data={}
         if 'consult_id' in request.session and 'medic_id' in request.session:
@@ -452,9 +537,11 @@ def consultaion_fee(request):
         else:
             request.session['consult_id']=None
             request.session['medic_id']=None
-            return render(request,"Doctor/consultMedicaddandupdate.html",{"consult_id":None})
+            return render(request,"Doctor/consultMedicadd.html",{"consult_id":None})
     
     else:
+        
+        # return HttpResponse("else part of consult medic fee")
         homefv=request.POST['homeFirstVisitFee']
         homesv=request.POST['homeSecondVisitFee']
         clinicfv=request.POST['clinicFirstVisitFee']
@@ -529,6 +616,7 @@ def pdf_view(request):
     return render(request, 'Doctor/pdf_view.html')
    
    else:
+        # return HttpResponse("else part of pdf_view")
         api_data={"doctor_location_id":request.session['location_id']}
         api_url="http://13.233.211.102/doctor/api/get_all_doctor_location/"
         response=requests.post(api_url,json=api_data)
@@ -563,7 +651,7 @@ def pdf_view(request):
         scriptoption_res=requests.post(scriptoption_url,json=scriptoption_data)
         print(chatscript_res.text)
         print(scriptoption_res.text)
-        return redirect(dashboard)
+        return redirect(index)
 
 
 def dashboard(request):
