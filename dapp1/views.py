@@ -215,6 +215,7 @@ def DoctorReg(request):
             # Extract doctor_id from the response
             doctor_id = api_response.get("message_data", {}).get("doctor_id")
             request.session['doctor_id'] = doctor_id
+            request.session['role']='Doctor'
             request.session.save()
             # print(response.status_code)
 
