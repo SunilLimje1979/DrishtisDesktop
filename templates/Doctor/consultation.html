@@ -188,6 +188,7 @@
             
                 <div class="label-row mb-2" style="margin-left: 1px;">
                   <label for="label2">Mobile: {{get_patient_by_appointment_id.appointment_mobileno}}{{patient_info.appointment_mobileno}}</label>
+                  <label for="label2"> Balance: {{outstanding}} <i class="fa-solid fa-indian-rupee-sign" style="font-size: 18px;"></i></label>
                   <label for="label2" style="font-size: 20px;">
                     <i class="fa-solid fa-circle-user"></i>
                     {% if get_patient_by_appointment_id.appointment_status == 1 %}

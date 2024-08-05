@@ -119,6 +119,9 @@
                             SEX: F
                         {% endif %}
                     </div>
+                    <div style="font-size: 20px;">
+                      Balance: {{data1.outstanding}}  <i class="fa-solid fa-indian-rupee-sign" style="font-size: 18px;"></i>
+                    </div>
                   </div>
                 
                   <div class="label-row">
@@ -226,29 +229,7 @@
       crossorigin="anonymous"
     ></script>
 
-<!-- <script>
-        document.getElementById('paidBtn').addEventListener('click', function() {
-       // Send AJAX request to backend API to fetch the PDF link
-       fetch('/DoctorCollection/paid/')
-        .then(response => response.json())
-        .then(data => {
-            // Check the response from the server
-            if (data.message === 'Payment successful') {
-                // Display a success message on the page
-                alert('Payment done successfully!');
-                // Redirect to the appointment screen
-                window.location.href = '{% url "get_all_doctor_appointments" %}';
-            } else {
-                // Display an error message if payment failed
-                alert('Payment failed. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Payment not done');
-        });
-    });
-</script> -->
+ 
 <script>
   // Wait for the document to be fully loaded
   document.addEventListener('DOMContentLoaded', function() {
@@ -260,7 +241,7 @@
           // Add an event listener to the paidBtn button
           paidBtn.addEventListener('click', function() {
               // Send AJAX request to backend API to fetch the PDF link
-              fetch('/DoctorCollection/paid/')
+              fetch('/DrishtisDesktop/paid/')
                   .then(response => response.json())
                   .then(data => {
                       // Check the response from the server

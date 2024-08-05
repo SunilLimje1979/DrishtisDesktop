@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script>
         // Function to show a popup message
         function showPopup(message) {
@@ -15,6 +16,10 @@
         }
     </script>
     <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
         .navbar-orange {
             background-color: #008373;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
@@ -78,13 +83,70 @@
             border-radius: 10px;
             transition: background-color 0.3s;
         }
+
+        /* Custom CSS for select2 */
+        .select2-container--default .select2-selection--single {
+          border: 1px solid black;
+          border-radius: .25rem;
+          height: calc(2.50rem + 15px);
+          background-color: #fff;
+          font-size: 30px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.65rem + 40px);
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: calc(2.50rem + 40px);
+            margin-left: 4px;
+            font-size: 20px;
+           
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #000 transparent transparent transparent;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 6px;
+            right: 8px;
+        }
+        .select2-container--default .select2-dropdown {
+            max-height: 750px;  
+            overflow-y: auto; 
+        }
+
+        /* Loader styles */
+        #loader {
+             position: fixed;
+             left: 50%;
+             top: 25%;
+             transform: translate(-50%, -50%);
+             border: 16px solid #f3f3f3;
+             border-radius: 50%;
+             border-top: 16px solid #3498db;
+             width: 120px;
+             height: 120px;
+             -webkit-animation: spin 2s linear infinite;
+             animation: spin 2s linear infinite;
+             display: none;
+             z-index: 1000;
+         }
+ 
+         @-webkit-keyframes spin {
+             0% { -webkit-transform: rotate(0deg); }
+             100% { -webkit-transform: rotate(360deg); }
+         }
+ 
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
-
+<div id="response-container">
+    <div id="loader"></div>
   
-    <form class="container form-container" {% if patient  %}action="{% url 'update_patient' patient.patient_id %}"{% else %}action="{% url 'addpatient' %}"{% endif %} method="Post">
+    <form class="container form-container" {% if patient  %}action="{% url 'update_patient' patient.patient_id %}"{% else %}action="{% url 'addpatient' %}"{% endif %} method="Post" id="adduppatient">
         {% csrf_token %}
         
         <div class="data-block2 mb-4">
@@ -196,18 +258,22 @@
         <div class="row">
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
-                    <select name="patient_countryid" class="form-control form-select" aria-label="Floating label select example">
+                    <select name="patient_countryid" class="form-control form-select" aria-label="Floating label select example" id="country">
                         <option value="" disabled selected hidden>Select</option>
-                        <option value="1" {% if patient.patient_countryid == 1 %}selected{% endif %}>India</option>
+                        {% for country in countries %}
+                        <option value="{{ country.id }}" {% if patient.patient_countryid == country.id %}selected{% elif not patient.patient_countryid and country.name == 'India' %}selected{% endif %}>{{ country.name }}</option>
+                        {% endfor %}
                     </select>
                     <label for="patient_countryid">Country</label>
                 </div>
             </div>
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
-                    <select name="patient_stateid" class="form-select" aria-label="Floating label select example">
+                    <select name="patient_stateid" class="form-select" aria-label="Floating label select example" id="state">
                         <option value="" disabled selected hidden>Select</option>
-                        <option value="1" {% if patient.patient_stateid == 1 %}selected{% endif %}>Maharashtra</option>
+                        {% for state in states %}
+                        <option value="{{ state.id }}" {% if patient.patient_stateid == state.id %}selected{% elif not patient.patient_stateid and state.name == 'Maharashtra' %}selected{% endif %}>{{ state.name }}</option>
+                        {% endfor %}
                     </select>
                     <label for="patient_stateid">State</label>
                 </div>
@@ -218,7 +284,12 @@
         <div class="row">
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" name="patient_cityid" value="Pune" placeholder="City">
+                    <select name="patient_cityid" class="form-select" aria-label="Floating label select example" id="city">
+                        <option value="" disabled selected hidden>Select</option>
+                        {% for city in cities %}
+                            <option value="{{ city.id }}" {% if patient.patient_cityid == city.id %}selected{% elif not patient.patient_cityid and city.name == 'Pune' %}selected{% endif %}>{{ city.name }}</option>
+                        {% endfor %}
+                    </select>
                     <label for="patient_cityid">City</label>
                 </div>
             </div>
@@ -378,7 +449,12 @@
         </div>
     </form>
 
+   </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
     
      <script>
         // Function to remove a row from the table and update hidden fields
@@ -461,6 +537,112 @@
             diseaseDescription.value = '';
         }
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#country').change(function() {
+                var country_id = $(this).val();
+                $.ajax({
+                    url: '{% url "get_states" %}',
+                    data: {
+                        'country_id': country_id
+                    },
+                    success: function(data) {
+                        $('#state').html('');
+                        $('#state').append('<option value="" disabled selected hidden>Select</option>');
+                        data.forEach(function(state) {
+                            $('#state').append('<option value="' + state.id + '">' + state.name + '</option>');
+                        });
+                        $('#city').html('<option value="" disabled selected hidden>Select</option>'); // Clear cities
+                    }
+                });
+            });
+
+            $('#state').change(function() {
+                var state_id = $(this).val();
+                $.ajax({
+                    url: '{% url "get_cities" %}',
+                    data: {
+                        'state_id': state_id
+                    },
+                    success: function(data) {
+                        $('#city').html('');
+                        $('#city').append('<option value="" disabled selected hidden>Select</option>');
+                        data.forEach(function(city) {
+                            $('#city').append('<option value="' + city.id + '">' + city.name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Initialize Select2
+        $(document).ready(function() {
+            $('#country').select2();
+        });
+
+        $(document).ready(function() {
+            $('#state').select2();
+        });
+
+        $(document).ready(function() {
+            $('#city').select2();
+        });
+    </script>
+    <script>
+        // Handle form submission
+        $('#adduppatient').on('submit', function(e) {
+                $('.btn-save').prop('disabled', true); // Disable the save button
+                $('.btn').prop('disabled', true); // Disable the add-disease and add-allergy button
+                $('#loader').show(); // Show the loader
+            });
+    </script>
+
+<script>
+    $(document).ready(function() {
+        $('#adduppatient').on('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the normal way
+
+            if ($('#bookAppointment').is(':checked')) {
+                // Book Appointment is checked, submit via AJAX
+                var formData = new FormData(this);
+                const rescontainer = document.getElementById('response-container');
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Assuming the server response contains the HTML to render
+                        $('#response-container').html(response);
+                        // Find and execute scripts in the fetched HTML
+                         // Find and execute scripts in the fetched HTML
+                        const scriptTags = rescontainer.getElementsByTagName('script');
+                        for (let script of scriptTags) {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        }
+                        // Reinitialize event listeners on the newly loaded content
+                        // initializeFormEventListeners();
+                         
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        console.error('AJAX Error:', status, error);
+                    }
+                });
+            } else {
+                // Book Appointment is not checked, submit the normal way
+                this.submit();
+            }
+        });
+    });
+</script>
 
 
 </body>

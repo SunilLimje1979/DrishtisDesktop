@@ -14,6 +14,7 @@
     <style>
         body {
             background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
         }
 
         .navbar-orange {
@@ -55,6 +56,7 @@
         .patient-label {
             font-size: 16px;
             color: #0a0b0b;
+            
         }
 
         .patient-info {
@@ -72,7 +74,7 @@
         }
 
         .patient-list {
-            width: 39%; /* Adjust as needed */
+            width: 32%; /* Adjust as needed */
             max-height: 100%; /* Set a maximum height for independent scrolling */
             overflow-y: auto; /* Enable vertical scrolling */
             -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -85,7 +87,7 @@
         }
 
         .form-container {
-            width: 60%;
+            width: 68%;
             margin-top: 1px;
             padding: 2px;
             background-color: #f8f9fa;
@@ -148,6 +150,7 @@
                                 {{ patient.patient_mobileno }}
                             </div>
                             <div class="patient-label">{{ patient.patient_firstname }} {{ patient.patient_lastname }}</div>
+                            <div class="patient-label" style="margin-left: 30px;"><i class="fa-solid fa-indian-rupee-sign"></i>{% if patient.outstanding %} {{ patient.outstanding }} {%else%} 0 {%endif%}</div>
                         </div>
                     </div>
                 </div>
@@ -169,6 +172,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    
 
     <!-- JavaScript code -->
     <script>
@@ -206,6 +212,13 @@
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                             // Find and execute scripts in the fetched HTML
+                            const scriptTags =updateFormContainer.getElementsByTagName('script');
+                            for (let script of scriptTags) {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = script.textContent;
+                                document.body.appendChild(newScript);
+                            }
                             // Reinitialize event listeners on the newly loaded content
                             initializeFormEventListeners();
                         })
@@ -241,6 +254,13 @@
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                     // Find and execute scripts in the fetched HTML
+                    const scriptTags = container.getElementsByTagName('script');
+                    for (let script of scriptTags) {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    }
                     // Reinitialize event listeners on the newly loaded content
                     initializeFormEventListeners();
                 })
@@ -330,7 +350,9 @@
             diseaseSelect.selectedIndex = 0;
             diseaseDescription.value = '';
         }
+
     </script>
+
     
 
 {% endblock %}
