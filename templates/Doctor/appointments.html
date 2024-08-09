@@ -394,7 +394,34 @@
                 type: 'GET',
                 success: function (data) {
                     $('#opd').html(data).show();
-                    initializeConsultationScripts();
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    const parts = url.split('/');
+                    const page = parts[2];  // This will extract 'initial_assesment'
+
+                    if(page === 'consultation'){
+                        initializeConsultationScripts();
+                    }
+
+                    if(page == 'patientselect' && subscriptionStatus==='inactive'){
+                        location.reload();
+                    }
+
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
+                    
+                    if( page == 'for_user'){
+                        initializePaymentScripts();
+                    }
+                     
+                     
                 },
                 error: function () {
                     $('#opd').html('<p>Error loading content.</p>').show();
@@ -540,6 +567,37 @@
             dosagesField.value = '';
             instructionsSelect.value = '';
             languageSelect.value = '';
+        }
+    }
+
+    function initializePaymentScripts() {
+        // Get the paidBtn element
+        var paidBtn = document.getElementById('paidBtn');
+
+        // Check if the paidBtn element exists
+        if (paidBtn) {
+            // Add an event listener to the paidBtn button
+            paidBtn.addEventListener('click', function() {
+                // Send AJAX request to backend API to fetch the PDF link
+                fetch('/DrishtisDesktop/paid/')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Check the response from the server
+                        if (data.message === 'Payment successful') {
+                            // Display a success message on the page
+                            alert('Payment done successfully!');
+                            // Redirect to the appointment screen
+                            window.location.href = '{% url "get_all_doctor_appointments" %}';
+                        } else {
+                            // Display an error message if payment failed
+                            alert('Payment failed. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Payment done');
+                    });
+            });
         }
     }
 

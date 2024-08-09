@@ -148,6 +148,7 @@
             event.preventDefault();
             const container = document.getElementById('addInstructionPageContainer');
             const updateInstructionContainer = document.getElementById('updateInstructionFormContainer');
+            updateInstructionContainer.innerHTML = '';
 
             updateInstructionContainer.style.display = 'none';
             fetch('{% url "insert_instruction" %}')
@@ -155,6 +156,17 @@
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
                 })
                 .catch(error => console.warn('Error loading add Instruction form:', error));
         });
@@ -175,12 +187,24 @@
                     const addInstructionContainer = document.getElementById('addInstructionPageContainer');
 
                     addInstructionContainer.style.display = 'none';
+                    addInstructionContainer.innerHTML = '';
 
                     fetch(`/DrishtisDesktop/update_instruction/${instructionId}`)
                         .then(response => response.text())
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                            var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                            if (subscriptionStatus === 'inactive') {
+                                var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                subscriptionModal.show();
+                                $('.btn-save').prop('disabled', true); // Disable the save button
+                                $('#SaveButton').prop('disabled', true); // Disable the save button
+                                $('.btn-light').prop('disabled',true);
+                            }
                         })
                         .catch(error => console.error('Error loading update Instruction form:', error));
                 });

@@ -160,11 +160,23 @@
             const updateAllergyContainer = document.getElementById('updateAllergyFormContainer');
 
             updateAllergyContainer.style.display = 'none';
+            updateAllergyContainer.innerHTML = '';
             fetch('{% url "insert_allergy" %}')
                 .then(response => response.text())
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
                 })
                 .catch(error => console.warn('Error loading add Allergy form:', error));
         });
@@ -185,12 +197,24 @@
                     const addAllergyContainer = document.getElementById('addAllergyPageContainer');
 
                     addAllergyContainer.style.display = 'none';
+                    addAllergyContainer.innerHTML = '';
 
                     fetch(`/DrishtisDesktop/update_allergy/${allergyId}`)
                         .then(response => response.text())
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                            var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                            if (subscriptionStatus === 'inactive') {
+                                var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                subscriptionModal.show();
+                                $('.btn-save').prop('disabled', true); // Disable the save button
+                                $('#SaveButton').prop('disabled', true); // Disable the save button
+                                $('.btn-light').prop('disabled',true);
+                            }
                         })
                         .catch(error => console.error('Error loading update Allergy form:', error));
                 });

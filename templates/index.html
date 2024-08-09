@@ -118,5 +118,51 @@
   
    
 </div>
+ <!-- Modal -->
+ <div class="modal fade" id="subscriptionmodal" tabindex="-1" aria-labelledby="subscriptionModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+   <div class="modal-content">
+       <div class="modal-header">
+       <h5 class="modal-title" id="subscriptionModalLabel">Subscription Status</h5>
+       </div>
+       <div class="modal-body">
+       {% if subscription_status == 'active' %}
+           Your current subscription plan is about to expire in {{days}} days
+       {%else%}
+           Your current plan has expired. Please click on renew and choose the next plan
+       {%endif%}
+       </div>
+       <div class="modal-footer">
+       <button type="button" class="btn btn-primary" onclick="location.href='/DoctorCollection/renew_subscription'" disabled>Renew</button>
+       <!-- <button type="button" class="btn btn-secondary" onclick="location.href='/continue'">Continue</button> -->
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue</button>
+       </div>
+   </div>
+   </div>
+</div>
+
+<script>
+   // Check the subscription status (assuming this is provided by the backend)
+   document.addEventListener('DOMContentLoaded', function() {
+     var subscriptionStatus = '{{ subscription_status }}'; // Replace with actual status from backend
+     var days = parseInt('{{days}}', 10)
+   //   console.log(days);
+     if (subscriptionStatus === 'inactive') {
+       var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionmodal'), {
+           backdrop: 'static',
+           keyboard: false
+       });
+       subscriptionModal.show();
+     }
+
+     else if(subscriptionStatus === 'active' && days<15){
+       var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionmodal'), {
+           backdrop: 'static',
+           keyboard: false
+       });
+       subscriptionModal.show();
+     }
+   });
+</script>
 
 {% endblock content %}

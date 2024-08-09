@@ -164,13 +164,26 @@
             event.preventDefault();
             const container = document.getElementById('addAdvicePageContainer');
             const updateAdviceContainer = document.getElementById('updateAdviceFormContainer');
+            
 
             updateAdviceContainer.style.display = 'none';
+            updateAdviceContainer.innerHTML = '';
             fetch('{% url "insert_advice" %}')
                 .then(response => response.text())
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
                 })
                 .catch(error => console.warn('Error loading add Advice form:', error));
         });
@@ -191,12 +204,24 @@
                     const addAdviceContainer = document.getElementById('addAdvicePageContainer');
 
                     addAdviceContainer.style.display = 'none';
+                    addAdviceContainer.innerHTML = '';
 
                     fetch(`/DrishtisDesktop/update_advice/${adviceId}`)
                         .then(response => response.text())
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                            var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                            if (subscriptionStatus === 'inactive') {
+                                var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                subscriptionModal.show();
+                                $('.btn-save').prop('disabled', true); // Disable the save button
+                                $('#SaveButton').prop('disabled', true); // Disable the save button
+                                $('.btn-light').prop('disabled',true);
+                            }
                         })
                         .catch(error => console.error('Error loading update Advice form:', error));
                 });

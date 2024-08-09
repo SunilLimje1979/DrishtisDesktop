@@ -116,6 +116,10 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        .row .form-control{
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -206,12 +210,24 @@
     
                     // Hide the add user container if it's visible
                     addUserContainer.style.display = 'none';
+                    addUserContainer.innerHTML = '';
     
                     fetch(`/DrishtisDesktop/update_patient/${patientId}`)
                         .then(response => response.text())
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                            var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                            if (subscriptionStatus === 'inactive') {
+                                var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                subscriptionModal.show();
+                                $('.btn-save').prop('disabled', true); // Disable the save button
+                                $('#SaveButton').prop('disabled', true); // Disable the save button
+                                $('.btn-light').prop('disabled',true);
+                            }
                              // Find and execute scripts in the fetched HTML
                             const scriptTags =updateFormContainer.getElementsByTagName('script');
                             for (let script of scriptTags) {
@@ -254,6 +270,17 @@
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
                      // Find and execute scripts in the fetched HTML
                     const scriptTags = container.getElementsByTagName('script');
                     for (let script of scriptTags) {

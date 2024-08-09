@@ -78,7 +78,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap"/>
     <style>
         .form-container {
-            margin-top: 80px;
+            margin-top: 350px;
             padding: 10px;
         }
 
@@ -95,7 +95,7 @@
         /* Loader styles */
         #loader {
              position: fixed;
-             left: 50%;
+             left: 45%;
              top: 25%;
              transform: translate(-50%, -50%);
              border: 16px solid #f3f3f3;
@@ -118,15 +118,28 @@
              0% { transform: rotate(0deg); }
              100% { transform: rotate(360deg); }
          }
+
+        .overlay-message {
+            position: fixed;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -45%);
+            color: black;
+            font-size: 18px;
+            text-align: center;
+            z-index: 1001;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div id="loader"></div>
+    <div class="overlay-message" id="loaderMessage" style="color: green;">Please sit back and relax while we process your Details...</div>
     <form class="container form-container" method="POST" id="confirm">
         {% csrf_token %}
 
-        <object
+        <!-- <object
             data="http://13.233.211.102/medicalrecord/static/clinicpdfs/2316_xrYPc09.pdf#page=2"
             type="application/pdf"
             width="100%"
@@ -143,7 +156,7 @@
                     <a href="http://13.233.211.102/medicalrecord/static/clinicpdfs/2316_xrYPc09.pdf">Download the PDF</a>.
                 </p>
             </iframe>
-        </object>
+        </object> -->
         <!-- <iframe src="http://13.233.211.102/medicalrecord/static/clinicpdfs/2316_xrYPc09.pdf"></iframe> -->
         <!-- Save Button (Bottom) -->
         <div class="text-center mt-3">
@@ -161,6 +174,7 @@
         $('#confirm').on('submit', function(e) {
                 $('.btn-save').prop('disabled', true); // Disable the save button
                 $('#loader').show(); // Show the loader
+                $('#loaderMessage').show(); // Show the message
             });
    </script>
 </body>

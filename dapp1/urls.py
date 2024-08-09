@@ -63,4 +63,6 @@ urlpatterns = [
    path('get_states/', get_states, name='get_states'),
    path('get_cities/', get_cities, name='get_cities'),
    path('planinfo/',planinfo,name='planinfo'),
+   path('subscriptioninfo/',subscriptioninfo,name='subscriptioninfo'),
+   path('popup/',popup,name='popup'),
 ]

@@ -170,11 +170,23 @@
             const updateLabContainer = document.getElementById('updateLabFormContainer');
 
             updateLabContainer.style.display = 'none';
+            updateLabContainer.innerHTML = '';
             fetch('{% url "add_lab_report" %}')
                 .then(response => response.text())
                 .then(html => {
                     container.innerHTML = html;
                     container.style.display = 'block';
+                    var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                    if (subscriptionStatus === 'inactive') {
+                        var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        subscriptionModal.show();
+                        $('.btn-save').prop('disabled', true); // Disable the save button
+                        $('#SaveButton').prop('disabled', true); // Disable the save button
+                        $('.btn-light').prop('disabled',true);
+                    }
                 })
                 .catch(error => console.warn('Error loading add lab form:', error));
         });
@@ -195,12 +207,24 @@
                     const addLabContainer = document.getElementById('addLabPageContainer');
 
                     addLabContainer.style.display = 'none';
+                    addLabContainer.innerHTML = '';
 
                     fetch(`/DrishtisDesktop/update_lab_report/${labId}`)
                         .then(response => response.text())
                         .then(html => {
                             updateFormContainer.innerHTML = html;
                             updateFormContainer.style.display = 'block';
+                            var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                            if (subscriptionStatus === 'inactive') {
+                                var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                subscriptionModal.show();
+                                $('.btn-save').prop('disabled', true); // Disable the save button
+                                $('#SaveButton').prop('disabled', true); // Disable the save button
+                                $('.btn-light').prop('disabled',true);
+                            }
                         })
                         .catch(error => console.error('Error loading update lab form:', error));
                 });
