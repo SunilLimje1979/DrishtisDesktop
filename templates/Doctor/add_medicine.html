@@ -59,8 +59,17 @@
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <a class="navbar-brand1" href="{% url 'get_all_medicines' %}" >
                     <i class="fas fa-arrow-left"></i>
-                    {% if medicine %}
+                    {% comment %} {% if medicine %}
                         Update Medicine
+                    {% else %}
+                        Insert Medicine
+                    {% endif %} {% endcomment %}
+                    {% if medicine %}
+                        {% if medicine.doctor_id%}
+                            Update Medicine
+                        {%else%}
+                            Master Data
+                        {%endif%}
                     {% else %}
                         Insert Medicine
                     {% endif %}
@@ -90,6 +99,11 @@
                         <option value="1" {% if medicine.medicine_form == 1 %}selected{% endif %}>Tab</option>
                         <option value="2" {% if medicine.medicine_form == 2 %}selected{% endif %}> Syp</option>
                         <option value="3"{% if medicine.medicine_form == 3 %}selected{% endif %}> Pwd</option>
+                        <option value="4"{% if medicine.medicine_form == 4 %}selected{% endif %}> Capsule</option>
+                        <option value="5"{% if medicine.medicine_form == 5 %}selected{% endif %}> Injection</option>
+                        <option value="6"{% if medicine.medicine_form == 6 %}selected{% endif %}> Suspension</option>
+                        <option value="7"{% if medicine.medicine_form == 7 %}selected{% endif %}> Drop</option>
+                        <option value="8"{% if medicine.medicine_form == 8 %}selected{% endif %}> other</option>
                     </select>
                     <label for="medicine_form">Medicine form</label>
                 </div>
@@ -195,7 +209,7 @@
       </div>
 
         <!-- Save Button (Bottom) -->
-        <div class="text-center">
+        {% comment %} <div class="text-center">
             <button type="submit" class="btn btn-primary btn-save" style="background-color: #008373;"><span
                     class="fas fa-save" style="color: #FFFFFF;"></span>
                     {% if medicine %}
@@ -204,7 +218,24 @@
                       Save
                     {% endif %}
             </button>
-        </div>
+        </div> {% endcomment %}
+        {% if medicine %}
+            <div class="text-center mt-3">
+                {%if medicine.doctor_id%}
+                <button type="submit" class="btn btn-primary btn-save" style="background-color:  #008373; border-color: #008373;" ><span
+                        class="fas fa-save" style="color: #FFFFFF;"></span>
+                        Update
+                </button>
+                {%endif%}
+            </div>
+        {%else%}
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary btn-save" style="background-color:  #008373; border-color: #008373;" ><span
+                        class="fas fa-save" style="color: #FFFFFF;"></span>
+                        Save
+                </button>
+            </div>
+        {%endif%}
     </form>
 
     <script>

@@ -96,6 +96,11 @@
             justify-content: space-between;
             align-items: center;
         }
+        .actions-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: auto;
+        }
     </style>
 </head>
 
@@ -115,13 +120,13 @@
                 {% include "includes/message.html" %}
                 <!-- Search Bar -->
                 <div class="mb-2">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Disease name">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Disease name or Type">
                 </div>
                 <!-- Disease Cards -->
                 {% for data in all_data %}
-                <div class="disease-card" data-diseaseid="{{ data.disease_id }}">
-                    <div class="disease-info">{{ data.disease_name }} - 
-                        {% if data.disease_type == 1 %}
+                <div class="disease-card {% if data.doctor_id == None %}disabled-card{% endif %}" data-diseaseid="{{ data.disease_id }}">
+                    <div class="disease-info">{{ data.disease_name }} - {{data.disease_type}}
+                        {% comment %} {% if data.disease_type == 1 %}
                             Skin
                         {% elif data.disease_type == 2 %}
                             Food
@@ -129,8 +134,13 @@
                             Air
                         {% else %}
                             Unknown Type
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                     </div>
+                    {% if data.doctor_id == None %}
+                    <div class="actions-container"> 
+                        MasterData
+                    </div>
+                    {%endif%}
                 </div>
                 {% endfor %}
             </form>
@@ -187,6 +197,10 @@
             const diseaseCards = document.querySelectorAll('.disease-card');
             diseaseCards.forEach(card => {
                 card.addEventListener('click', function(event) {
+                    // Ignore clicks on disabled cards
+                    if (this.classList.contains('disabled-card')) {
+                        return; // Prevent further action
+                    }
                     if (event.target.tagName === 'I' && event.target.classList.contains('fa-trash')) {
                         return;
                     }
@@ -228,7 +242,7 @@
             diseaseCards.forEach(function (card) {
                 const diseaseText = card.querySelector('.disease-info').textContent.toLowerCase();
                 if (diseaseText.includes(searchValue)) {
-                    card.style.display = 'block';
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }

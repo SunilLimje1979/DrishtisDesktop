@@ -175,8 +175,18 @@
                                 Syp
                             {% elif i.medicine_form == '3' %}
                                 Pwd
+                            {% elif i.medicine_form == '4' %}
+                                Capsule
+                            {% elif i.medicine_form == '5' %}
+                                  Injection
+                            {% elif i.medicine_form == '6' %}
+                                  Suspension
+                            {% elif i.medicine_form == '7' %}
+                                  Drop
+                            {% elif i.medicine_form == '8' %}
+                                  other
                             {% else %}
-                                Unknown Mode
+                                  Unknown Mode
                             {% endif %}
                         </td>
                         <td>{{ i.medicine_duration }}</td>
@@ -216,7 +226,7 @@
 
         {%if consult_data.consultation_status == 2%}
           <div class="text-center mt-3">
-          <button id="paidBtn" class="btn" style="background-color: #008373;color: white;">Paid</button>
+          <button id="paidBtn" class="btn btn-light" style="background-color: #008373;color: white;">Paid</button>
           </div>
         {%endif%}
                 

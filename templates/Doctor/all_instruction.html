@@ -97,6 +97,11 @@
             justify-content: space-between;
             align-items: center;
         }
+        .actions-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: auto;
+        }
     </style>
 </head>
 
@@ -120,8 +125,13 @@
                 </div>
                 <!-- Instruction Cards -->
                 {% for data in all_data %}
-                <div class="instruction-card" data-instructionid="{{ data.doctor_instruction_id }}">
+                <div class="instruction-card {% if data.doctor_id == None %}disabled-card{% endif %}" data-instructionid="{{ data.doctor_instruction_id }}">
                     <div class="instruction-info">{{ data.instruction_text }} - {{ data.instruction_language }}</div>
+                    {% if data.doctor_id == None %}
+                    <div class="actions-container"> 
+                        MasterData
+                    </div>
+                    {%endif%}
                 </div>
                 {% endfor %}
             </form>
@@ -178,6 +188,10 @@
             const instructionCards = document.querySelectorAll('.instruction-card');
             instructionCards.forEach(card => {
                 card.addEventListener('click', function(event) {
+                    // Ignore clicks on disabled cards
+                    if (this.classList.contains('disabled-card')) {
+                        return; // Prevent further action
+                    }
                     if (event.target.tagName === 'I' && event.target.classList.contains('fa-trash')) {
                         return;
                     }
@@ -219,7 +233,7 @@
             instructionCards.forEach(function (card) {
                 const instructionText = card.querySelector('.instruction-info').textContent.toLowerCase();
                 if (instructionText.includes(searchValue)) {
-                    card.style.display = 'block';
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }

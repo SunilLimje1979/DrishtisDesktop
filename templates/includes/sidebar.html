@@ -28,13 +28,13 @@
                 <a href="#"><i class="fa-brands fa-unity"></i> <span>Master's</span> <span
                         class="menu-arrow"></span></a>
                 <ul>
-                    <li class="{% active_link 'get_all_medicines' %}"><a href="{% url 'get_all_medicines' %}"><i class="fas fa-pills"></i> <span>Medicines</span></a></li>
-                    <li class="{% active_link 'get_all_lab_report' %}"><a href="{% url 'get_all_lab_report' %}"><i class="fas fa-flask"></i> <span>Exam/Lab</span></a></li>
-                    <li class="{% active_link 'all_kco' %}"><a href="{% url 'all_kco' %}"><i class="fa-solid fa-notes-medical"></i> <span>KCO</span></a></li>
-                    <li class="{% active_link 'all_advice' %}"><a href="{% url 'all_advice' %}"><i class="fa-solid fa-comment-medical"></i> <span>Advice</span></a></li>
-                    <li class="{% active_link 'all_instruction' %}"><a href="{% url 'all_instruction' %}"><i class="fa-solid fa-book-medical"></i> <span>Instruction</span></a></li>
-                    <li class="{% active_link 'all_diseases' %}"><a href="{% url 'all_diseases' %}"><i class="fa-solid fa-virus"></i> <span>Disease</span></a></li>
-                    <li class="{% active_link 'all_allergy' %}"><a href="{% url 'all_allergy' %}"><i class="fa-solid fa-hand-dots"></i> <span>Allergies</span></a></li>
+                    <li><a href="{% url 'get_all_medicines' %}" class="{% active_link 'get_all_medicines' %}"><i class="fas fa-pills"></i> <span>Medicines</span></a></li>
+                    <li><a href="{% url 'get_all_lab_report' %}" class="{% active_link 'get_all_lab_report' %}"><i class="fas fa-flask"></i> <span>Exam/Lab</span></a></li>
+                    <li><a href="{% url 'all_kco' %}" class="{% active_link 'all_kco' %}"><i class="fa-solid fa-notes-medical"></i> <span>KCO</span></a></li>
+                    <li><a href="{% url 'all_advice' %}" class="{% active_link 'all_advice' %}"><i class="fa-solid fa-comment-medical"></i> <span>Advice</span></a></li>
+                    <li><a href="{% url 'all_instruction' %}" class="{% active_link 'all_instruction' %}"><i class="fa-solid fa-book-medical"></i> <span>Instruction</span></a></li>
+                    <li ><a href="{% url 'all_diseases' %}" class="{% active_link 'all_diseases' %}"><i class="fa-solid fa-virus"></i> <span>Disease</span></a></li>
+                    <li><a href="{% url 'all_allergy' %}"  class="{% active_link 'all_allergy' %}"><i class="fa-solid fa-hand-dots"></i> <span>Allergies</span></a></li>
                 </ul>
             </li>
 
@@ -52,6 +52,30 @@
                     <li ><a href="{% url 'prescription_setting' %}" class="{% active_link 'prescription_setting' %}"><i class="fa-solid  fa-file-prescription"></i><span> Prescriptions</span></a></li>
                     <li ><a href="{% url 'get_all_users' %}" class="{% active_link 'get_all_users' %}"><i class="fa-solid  fa-user"></i><span> Users</span></a></li>
                 </ul>
+            </li>
+
+            {% comment %} ##################################### Pharmacist ############################################### {% endcomment %}
+            <li class="submenu {% active_link '' %}">
+                <a href="#"><i class="fa-solid fa-suitcase-medical"></i> <span>Pharmacist's</span> <span
+                        class="menu-arrow"></span></a>
+                <ul>
+                    <li ><a href="{% url 'get_all_pharmacist' %}" class="{% active_link 'get_all_pharmacist/' %}"><i class="fa-solid fa-person-circle-check"></i><span> Approved Pharmacist</span></a></li>
+                    <li><a href="{% url 'Add_pharmacist' %}"  class="{% active_link 'Add_pharmacist' %}"><i class="fa-solid fa-user-plus"></i><span> Add Pharmacist</span></a></li>   
+                </ul>
+            </li>
+
+            {% comment %} ##################################### Pharmacist ############################################### {% endcomment %}
+            <li class="submenu {% active_link '' %}">
+                <a href="#"><i class="fa-solid fa-vials"></i> <span>Laboratory's</span> <span
+                        class="menu-arrow"></span></a>
+                <ul>
+                    <li ><a href="{% url 'get_all_laboratory' %}" class="{% active_link 'get_all_laboratory' %}"><i class="fa-solid fa-person-circle-check"></i><span> Approved Laboratory</span></a></li>
+                    <li><a href="{% url 'Add_laboratory' %}"  class="{% active_link 'Add_laboratory' %}"><i class="fa-solid fa-user-plus"></i><span> Add Laboratory</span></a></li>   
+                </ul>
+            </li>
+
+            <li class="{% active_link 'showDeals' %}">
+                <a href="{% url 'showDeals' %}"><i class="fa-solid fa-envelopes-bulk"></i><span>Offers</span></a>
             </li>
 
 {%endif%}   

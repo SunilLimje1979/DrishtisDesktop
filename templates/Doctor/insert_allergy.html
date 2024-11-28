@@ -76,14 +76,20 @@
         </div>
         <div class="row">
             <div class="col-md-6 col-12 mb-3">
-                <div class="form-floating">
-                    <select class="form-select" id="typeSelect" name="allergy_type" aria-label="Floating label select example" required>
+                <div class="">
+                    {% comment %} <select class="form-select" id="typeSelect" name="allergy_type" aria-label="Floating label select example" required>
                         <option value="" disabled selected hidden>Select</option>
                         <option value="1" {% if allergy.allergy_type == 1 %}selected{% endif %}>Skin</option>
                         <option value="2" {% if allergy.allergy_type == 2 %}selected{% endif %}>Food</option>
                         <option value="3" {% if allergy.allergy_type == 3 %}selected{% endif %}>Air</option>
+                    </select> {% endcomment %}
+                    <select class="form-select" id="typeSelect" name="allergy_type" aria-label="Floating label select example" required>
+                        <option value="" disabled selected hidden>Select Allergy Type</option>
+                        {% for key, value in types.items %}
+                            <option value="{{ key }}"{% if allergy.allergy_type == key %} selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
                     </select>
-                    <label for="allergy_type">Allergy Type</label>
+                    {% comment %} <label for="allergy_type">Allergy Type</label> {% endcomment %}
                 </div>
             </div>
 

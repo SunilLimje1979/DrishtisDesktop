@@ -131,16 +131,20 @@
                 {% include "includes/message.html" %}
                 <!-- Search Bar -->
                 <div class="mb-2">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Investigation Name">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Investigation Name or Category">
                 </div>
                 <!-- Lab Report Cards -->
                 {% for i in lab_reports %}
-                <div class="lab-card" data-investigation-id="{{ i.investigation_id }}">
+                <div class="lab-card {% if i.doctor_id == None %}disabled-card{% endif %}" data-investigation-id="{{ i.investigation_id }}">
                     <div class="lab-info">{{ i.investigation_name }} - {{ i.investigation_category }}</div>
                     <div class="actions-container">
+                        {% if i.doctor_id %}
                         <div onclick="confirmDelete('{{ i.investigation_id }}')">
                             <i class="fa-solid fa-trash" style="color: gray;"></i>
                         </div>
+                        {%else%}
+                        MasterData
+                        {%endif%}
                     </div>
                 </div>
                 {% endfor %}
@@ -198,6 +202,10 @@
             const labCards = document.querySelectorAll('.lab-card');
             labCards.forEach(card => {
                 card.addEventListener('click', function(event) {
+                    // Ignore clicks on disabled cards
+                    if (this.classList.contains('disabled-card')) {
+                        return; // Prevent further action
+                    }
                     if (event.target.tagName === 'I' && event.target.classList.contains('fa-trash')) {
                         return;
                     }
@@ -245,7 +253,7 @@
             labReports.forEach(function (report) {
                 const investigationName = report.querySelector('.lab-info').textContent.toLowerCase();
                 if (investigationName.includes(searchValue)) {
-                    report.style.display = 'block';
+                    report.style.display = 'flex';
                 } else {
                     report.style.display = 'none';
                 }

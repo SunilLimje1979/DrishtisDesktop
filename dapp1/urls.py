@@ -65,4 +65,13 @@ urlpatterns = [
    path('planinfo/',planinfo,name='planinfo'),
    path('subscriptioninfo/',subscriptioninfo,name='subscriptioninfo'),
    path('popup/',popup,name='popup'),
+   path('approvePharmacy/',approvePharmacy,name='approvePharmacy'),
+   path('get_all_pharmacist/',get_all_pharmacist,name='get_all_pharmacist'),
+   path('toggle_pharmacist_status/',toggle_pharmacist_status,name='toggle_pharmacist_status'),
+   path('Add_pharmacist/',Add_pharmacist,name='Add_pharmacist'),
+   path('get_all_laboratory/',get_all_laboratory,name='get_all_laboratory'),
+   path('toggle_laboratory_status/',toggle_laboratory_status,name='toggle_laboratory_status'),
+   path('Add_laboratory/',Add_laboratory,name='Add_laboratory'),
+   path('showDeals/',showDeals,name='showDeals'),
+   path('handle_deal_action/',handle_deal_action, name='handle_deal_action'),
 ]
