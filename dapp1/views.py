@@ -328,7 +328,7 @@ def addClinic(request):
             timestamp = int(time())
 
             # Update the value in 'data' dictionary
-            data[0]['location_image'] = "https://www.drishtis.app/doctor"+updated_link
+            data[0]['location_image'] = "https://www.drishtis.app/drishti_doctor"+updated_link
 
             state_response = requests.post("https://drishtis.app/drishti_masters/api/get_states_by_country_id/",json={"country_id":data[0]['location_country_id']})
             states = (state_response.json().get("message_data", [])).get('states',[])
