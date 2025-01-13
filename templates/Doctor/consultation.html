@@ -150,6 +150,31 @@
           padding: 0;
           margin-right: 5px;
         }
+        /* Button Styles */
+        .btn-admit {
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            padding: 5px 15px; /* Adjust padding for smaller size */
+            font-size: 14px;
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer;
+        }
+
+        .btn-admit:hover {
+            background-color: #218838; /* Darker green on hover */
+            color:white;
+        }
+
+        .btn-ipd {
+            background-color:rgb(144, 93, 12); /* Gray for disabled button */
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: not-allowed; /* Indicate disabled state */
+        }
         
     </style>
   </head>
@@ -221,6 +246,31 @@
                       <label for="referred_to_doctor">Referred To</label>
                     </div>
                   </div> 
+                  {% if not consult_data %}
+                    <div class="col-3 mt-4">
+                      <!-- Button for Admit to Daycare -->
+                      <button 
+                          type="button" 
+                          id="admitToDaycareBtn" 
+                          class="btn btn-sm btn-admit" 
+                          data-id="{{ get_patient_by_appointment_id.appointment_id}}"
+                          onclick="location.href='/DrishtisDesktop/add_daycare/?appointment_id={{ get_patient_by_appointment_id.appointment_id}}'"> <!-- Pass ID dynamically here -->
+                          Admit to Daycare
+                      </button>
+                    </div> 
+                    <div class="col-3 mt-4">
+                      <!-- Button for Admit to IPD (Disabled) -->
+                      <button 
+                          type="button" 
+                          id="admitToIPDBtn" 
+                          class="btn btn-sm btn-ipd"
+                          style="background-color:rgb(144, 93, 12);color:white;"
+                          disabled>
+                          Admit to IPD
+                      </button>
+                      </button>
+                    </div> 
+                  {%endif%}
                 </div>
                 
                 <hr style="margin-top:2px;margin-bottom: 2px;">

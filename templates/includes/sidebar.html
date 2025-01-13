@@ -23,6 +23,11 @@
                 <a href="{% url 'all_patient' %}"><i class="fas fa-user-injured"></i> <span>Patient</span></a>
             </li>
 
+{% comment %} ##################################### Bills ############################################### {% endcomment %}
+            <li class="{% active_link 'get_unpaid_bills' %}">
+                <a href="{% url 'get_unpaid_bills' %}"><i class="fa-solid fa-money-bill"></i> <span>Bills</span></a>
+            </li>
+
 {% comment %} ##################################### Master's ############################################### {% endcomment %}
             <li class="submenu {% active_link '' %}">
                 <a href="#"><i class="fa-brands fa-unity"></i> <span>Master's</span> <span
@@ -76,6 +81,15 @@
 
             <li class="{% active_link 'showDeals' %}">
                 <a href="{% url 'showDeals' %}"><i class="fa-solid fa-envelopes-bulk"></i><span>Offers</span></a>
+            </li>
+
+            <li class="submenu {% active_link '' %}">
+                <a href="#"><i class="fa-solid fa-certificate"></i> <span>Certificates</span> <span
+                        class="menu-arrow"></span></a>
+                <ul>
+                    <li ><a href="{% url 'create_death_certificate' %}" class="{% active_link 'create_death_certificate' %}"><i class="fa-solid fa-skull"></i><span>Death certificate</span></a></li>
+                    <li><a href="{% url 'medical_certificate' %}"  class="{% active_link 'medical_certificate' %}"><i class="fa-solid fa-file-waveform"></i><span> Medical certificate</span></a></li>   
+                </ul>
             </li>
 
 {%endif%}   

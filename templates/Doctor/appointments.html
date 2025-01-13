@@ -391,7 +391,13 @@
             $.ajax({
                 url: url,
                 type: 'GET',
-                success: function (data) {
+                success: function (data,textStatus, jqXHR) {
+                    // Check if the server sent a redirect URL
+                    if (data.redirect_url) {
+                        console.log("397");
+                        window.location.href = data.redirect_url; // Navigate to the redirect URL
+                        return; // Exit the function
+                    }
                     $('#opd').html(data).show();
                     var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
                     const parts = url.split('/');
