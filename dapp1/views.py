@@ -4661,7 +4661,7 @@ def add_daycare(request):
             # Get_Patient_By_Appointment_Id(session,appointment_id)
     #######################################################################################################################
             
-        Get_Patient_Boimterics_Vitals(requests,request.session['appointment_id'])
+        Get_Patient_Boimterics_Vitals(requests,appointment_id)
         patient_res=requests.post('https://drishtis.app/drishti_pateint/api/get_patient_details_by_appointment_id/',json={"appointment_id":request.session['appointment_id']})
         outstanding=(patient_res.json().get("message_data",{})).get('outstanding',0) or 0
         # print(outstanding)
