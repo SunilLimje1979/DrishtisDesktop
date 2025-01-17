@@ -71,7 +71,7 @@
                   <div class="col-md-3 mb-3">
                       <div class="form-floating ">
                           <input type="date" class="form-control" id="dob" name="dob" value="{% if data1.dob %}{{ data1.dob }}{% endif %}" placeholder="DOB" required>
-                          <label for="dob">DOB</label>
+                          <label for="dob">DOB{%if not data1.dob%}<span style="color: red; font-weight: bold; font-size: 1em;">*</span>{%endif%}</label>
                       </div>
                   </div>
                   <div class="col-md-3 mt-3" style="margin: 0px;padding: 0px;">
@@ -125,55 +125,55 @@
                   <div class="row">
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="inputWeight" name="weight" value="{{vital_data.weight}}" placeholder="Weight" required>
+                              <input type="number" class="form-control" id="inputWeight" name="weight" value="{% if vital_data.weight %}{{vital_data.weight}}{%endif%}" placeholder="Weight">
                               <label for="inputWeight">Weight (Kg)</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="text" class="form-control" id="inputHeight" name="height" value="{{vital_data.height}}" placeholder="Height" required>
+                              <input type="text" class="form-control" id="inputHeight" name="height" value="{% if vital_data.height %}{{vital_data.height}}{%endif%}" placeholder="Height">
                               <label for="inputHeight">Height (cm)</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="text" class="form-control" id="inputBMI" name="bmi" value="{{vital_data.bmi}}" placeholder="BMI" readonly>
+                              <input type="text" class="form-control" id="inputBMI" name="bmi" value="{% if vital_data.bmi %}{{vital_data.bmi}}{%endif%}" placeholder="BMI" readonly>
                               <label for="inputBMI">BMI (kg/m&sup2;)</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="inputTemp" name="temp" value="{{vital_data.patient_temparature}}" placeholder="Temperature" required>
+                              <input type="number" class="form-control" id="inputTemp" name="temp" value="{% if vital_data.patient_temparature %}{{vital_data.patient_temparature}}{%endif%}" placeholder="Temperature">
                               <label for="inputTemp">Temperature (°F)</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="bp_s" name="bp_s" value="{{vital_data.patient_bpsystolic}}" placeholder="BP Systolic" required>
+                              <input type="number" class="form-control" id="bp_s" name="bp_s" value="{% if vital_data.patient_bpsystolic %}{{vital_data.patient_bpsystolic}}{%endif%}" placeholder="BP Systolic">
                               <label for="bp_s">BP Systolic</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="bp_d" name="bp_d" value="{{vital_data.patient_bpdistolic}}" placeholder="BP Diastolic" required>
+                              <input type="number" class="form-control" id="bp_d" name="bp_d" value="{% if vital_data.patient_bpdistolic %}{{vital_data.patient_bpdistolic}}{%endif%}" placeholder="BP Diastolic">
                               <label for="bp_d">BP Diastolic</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="heart_rate" name="heart_rate" value="{{vital_data.patient_heartratepluse}}" placeholder="Heart Rate" required>
+                              <input type="number" class="form-control" id="heart_rate" name="heart_rate" value="{% if vital_data.patient_heartratepluse %}{{vital_data.patient_heartratepluse}}{%endif%}" placeholder="Heart Rate">
                               <label for="heart_rate">Heart Rate(Per/min)</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <input type="number" class="form-control" id="respiratory_rate" name="respiratory_rate" value="{{vital_data.patient_respiratoryrate}}" placeholder="Respiratory Rate" required>
+                              <input type="number" class="form-control" id="respiratory_rate" name="respiratory_rate" value="{% if vital_data.patient_respiratoryrate %}{{vital_data.patient_respiratoryrate}}{%endif%}" placeholder="Respiratory Rate">
                               <label for="respiratory_rate">Respiratory Rate</label>
                           </div>
                       </div>
                       <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                              <select class="form-control" id="pain_scale" name="pain_scale" required>
+                              <select class="form-control" id="pain_scale" name="pain_scale">
                                   <option value="" disabled selected>Select Pain Scale</option>
                                   {% for value in pain_scale_range %}
                                       <option value="{{ value }}" {% if value == vital_data.patient_painscale %} selected {% endif %}>{{ value }}</option>
@@ -184,13 +184,13 @@
                       </div>
                       <div class="col-md-3 mb-2">
                         <div class="form-floating">
-                          <input type="text" id="inputField" class="form-control form-control-sm me-2" name="chest" placeholder=" " value="{{vital_data.patient_chest}}" required  style="margin-right:1% ;font-size: 16px;">
+                          <input type="text" id="inputField" class="form-control form-control-sm me-2" name="chest" placeholder=" "  {% if vital_data.patient_chest != '0' %} value="{{vital_data.patient_chest}}" {%endif%}  style="margin-right:1% ;font-size: 16px;">
                           <label for="chest">Chest</label>
                         </div>
                       </div>
                       <div class="col-md-6 mb-2">
                         <div class="form-floating">
-                          <textarea id="inputField" class="form-control form-control-sm me-2" name="ecg" placeholder=" " required style="margin-right: 1%; font-size: 16px;">{{ vital_data.patient_ecg }}</textarea>
+                          <textarea id="inputField" class="form-control form-control-sm me-2" name="ecg" placeholder=" " style="margin-right: 1%; font-size: 16px;">{% if vital_data.patient_ecg != '0' %}{{ vital_data.patient_ecg }}{%endif%}</textarea>
                             <label for="ecg">ECG</label>
                         </div>
                       </div>
@@ -242,11 +242,17 @@
             // Convert height from cm to meters
             height /= 100;
             
-            // Calculate BMI
-            let bmi = (weight / (height * height)).toFixed(2); // Rounded to 2 decimal places
-            
-            // Display BMI in the BMI input field
-            document.getElementById('inputBMI').value = bmi;
+            // Validate weight and height to ensure they have values and are greater than zero
+            if (weight && height > 0) {
+                // Calculate BMI
+                let bmi = (weight / (height * height)).toFixed(2); // Rounded to 2 decimal places
+  
+                // Display BMI in the BMI input field
+                document.getElementById('inputBMI').value = bmi;
+            } else {
+                // Clear the BMI input field if values are invalid
+                document.getElementById('inputBMI').value = '';
+            }
         }
         
         // Event listener for input fields

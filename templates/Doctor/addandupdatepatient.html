@@ -167,13 +167,13 @@
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="floatingfirstname" name="patient_firstname" value="{{patient.patient_firstname}}" placeholder="First Name" {%if not patient%} required {%endif%}>
-                    <label for="floatingfirstname">First Name</label>
+                    <label for="floatingfirstname">First Name<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                 </div>
             </div>
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="floatinglastname" name="patient_lastname" value="{{patient.patient_lastname}}" placeholder="Last Name" {%if not patient%} required {%endif%}>
-                    <label for="floatinglastname">Last Name</label>
+                    <label for="floatinglastname">Last Name<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                 </div>
             </div>
         </div>
@@ -189,7 +189,7 @@
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" name="patient_mobileno" value="{{patient.patient_mobileno}}"  placeholder="Mobile Number" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number" {%if patient%} readonly {%else%} required {%endif%}>
-                    <label for="patient_mobileno">Mobile Number</label>
+                    <label for="patient_mobileno">Mobile Number<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                 </div>
             </div>
              
@@ -204,7 +204,7 @@
                         <option value="0" {% if patient.patient_gender == 0 %}selected{% endif %}>Male</option>
                         <option value="1" {% if patient.patient_gender == 1 %}selected{% endif %}>Female</option>
                     </select>
-                    <label for="patient_gender">Gender</label>
+                    <label for="patient_gender">Gender<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                 </div>
             </div>
             <div class="col-md-6 col-6 mb-3">
@@ -224,7 +224,7 @@
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
                     <input type="date" class="form-control" name="dob" value="{{ patient.dob}}" {%if not patient%} required {%endif%}>
-                    <label for="dob">Date of Birth</label>
+                    <label for="dob">Date of Birth<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                 </div>
             </div>
             <div class="col-md-6 col-6 mb-3">

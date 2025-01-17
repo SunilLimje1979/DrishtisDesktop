@@ -422,7 +422,7 @@
              <div class="col-md-12">
                  <div class="form-floating">
                      <input type="text" class="form-control" name="clinicName" value="{{ data.location_title }}" placeholder="Clinic Name" required>
-                     <label for="clinicName">Clinic Name</label>
+                     <label for="clinicName">Clinic Name<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                  </div>
              </div>
          </div>
@@ -432,7 +432,7 @@
              <div class="col-md-12">
                  <div class="form-floating">
                      <textarea class="form-control" name="address" placeholder="Address" rows="3" required>{{ data.location_address }}</textarea>
-                     <label for="address">Address</label>
+                     <label for="address">Address<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                  </div>
              </div>
          </div>
@@ -479,7 +479,7 @@
              <div class="col-md-6">
                  <div class="form-floating">
                      <input type="text" class="form-control" name="pincode" value="{{ data.location_pincode }}" pattern="[0-9]{6}" title="Please enter a valid 6-digit PIN code" placeholder="Pincode" required>
-                     <label for="pincode">Pincode</label>
+                     <label for="pincode">Pincode<span style="color: red; font-weight: bold; font-size: 1em;">*</span></label>
                  </div>
              </div>
          </div>
@@ -488,13 +488,13 @@
          <div class="row mb-3">
              <div class="col-md-6">
                  <div class="form-floating">
-                     <input type="text" class="form-control" name="latitude" value="{{ data.location_latitute }}" placeholder="Latitude" required>
+                     <input type="text" class="form-control" name="latitude" value="{{ data.location_latitute }}" placeholder="Latitude">
                      <label for="latitude">Latitude</label>
                  </div>
              </div>
              <div class="col-md-6">
                  <div class="form-floating">
-                     <input type="text" class="form-control" name="longitude" value="{{ data.location_longitute }}" placeholder="Longitude" required>
+                     <input type="text" class="form-control" name="longitude" value="{{ data.location_longitute }}" placeholder="Longitude">
                      <label for="longitude">Longitude</label>
                  </div>
              </div>

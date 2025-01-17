@@ -175,6 +175,16 @@
             border-radius: 5px;
             cursor: not-allowed; /* Indicate disabled state */
         }
+
+      .modal input {
+        width: 100%;
+        padding: 5px;
+        margin: 10px 0;
+      }
+      .modal button {
+        width: 100%;
+        margin-top: 10px;
+      }
         
     </style>
   </head>
@@ -236,13 +246,13 @@
                 <div class="row">
                   <div class="col-3">
                     <div class="form-floating">
-                      <input type="text" class="form-control" name="referred_by_doctor" value="{{consult_data.referred_by_doctor}}" required>
+                      <input type="text" class="form-control" name="referred_by_doctor" value="{%if consult_data.referred_by_doctor%}{{consult_data.referred_by_doctor}}{%endif%}">
                         <label for="referred_by_doctor">Referred By</label>
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-floating">
-                      <input type="text"  class="form-control" name="referred_to_doctor" value="{{consult_data.referred_to_doctor}}" required>
+                      <input type="text"  class="form-control" name="referred_to_doctor" value="{% if consult_data.referred_to_doctor%}{{consult_data.referred_to_doctor}}{%endif%}">
                       <label for="referred_to_doctor">Referred To</label>
                     </div>
                   </div> 
@@ -311,55 +321,55 @@
                       <div class="row">
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="inputWeight" name="weight" value="{{i.weight}}" placeholder="Weight" required>
+                                <input type="number" class="form-control" id="inputWeight" name="weight" value="{% if i.weight %}{{i.weight}}{%endif%}" placeholder="Weight">
                                 <label for="inputWeight">Weight (Kg)</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="inputHeight" name="height" value="{{i.height}}" placeholder="Height" required>
+                                <input type="text" class="form-control" id="inputHeight" name="height" value="{% if i.height %}{{i.height}}{%endif%}" placeholder="Height">
                                 <label for="inputHeight">Height (cm)</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="inputBMI" name="bmi" value="{{i.bmi}}" placeholder="BMI" readonly>
+                                <input type="text" class="form-control" id="inputBMI" name="bmi" value="{% if i.bmi %}{{ i.bmi}}{%endif%}" placeholder="BMI" readonly>
                                 <label for="inputBMI">BMI (kg/m&sup2;)</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="inputTemp" name="temp" value="{{i.patient_temparature}}" placeholder="Temperature" required>
+                                <input type="number" class="form-control" id="inputTemp" name="temp" value="{% if i.patient_temparature %}{{i.patient_temparature}}{%endif%}" placeholder="Temperature">
                                 <label for="inputTemp">Temperature (°F)</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="bp_s" name="bp_s" value="{{i.patient_bpsystolic}}" placeholder="BP Systolic" required>
+                                <input type="number" class="form-control" id="bp_s" name="bp_s" value="{% if i.patient_bpsystolic %}{{i.patient_bpsystolic}}{%endif%}" placeholder="BP Systolic">
                                 <label for="bp_s">BP Systolic</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="bp_d" name="bp_d" value="{{i.patient_bpdistolic}}" placeholder="BP Diastolic" required>
+                                <input type="number" class="form-control" id="bp_d" name="bp_d" value="{% if i.patient_bpdistolic %}{{i.patient_bpdistolic}}{%endif%}" placeholder="BP Diastolic">
                                 <label for="bp_d">BP Diastolic</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="heart_rate" name="heart_rate" value="{{i.patient_heartratepluse}}" placeholder="Heart Rate" required>
+                                <input type="number" class="form-control" id="heart_rate" name="heart_rate" value="{% if i.patient_heartratepluse %}{{i.patient_heartratepluse}}{%endif%}" placeholder="Heart Rate">
                                 <label for="heart_rate">Heart Rate(Per/min)</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="respiratory_rate" name="respiratory_rate" value="{{i.patient_respiratoryrate}}" placeholder="Respiratory Rate" required>
+                                <input type="number" class="form-control" id="respiratory_rate" name="respiratory_rate" value="{% if i.patient_respiratoryrate %}{{i.patient_respiratoryrate}}{%endif%}" placeholder="Respiratory Rate">
                                 <label for="respiratory_rate">Respiratory Rate</label>
                             </div>
                         </div>
                         <div class="col-md-3 mb-2">
                             <div class="form-floating">
-                                <select class="form-control" id="pain_scale" name="pain_scale" required>
+                                <select class="form-control" id="pain_scale" name="pain_scale">
                                     <option value="" disabled selected>Select Pain Scale</option>
                                     {% for value in pain_scale_range %}
                                         <option value="{{ value }}" {% if value == i.patient_painscale %} selected {% endif %}>{{ value }}</option>
@@ -370,13 +380,13 @@
                         </div>
                         <div class="col-md-3 mb-2">
                           <div class="form-floating">
-                            <input type="text" id="inputField" class="form-control form-control-sm me-2" name="chest" placeholder=" " value="{{i.patient_chest}}" required  style="margin-right:1% ;font-size: 16px;">
+                            <input type="text" id="inputField" class="form-control form-control-sm me-2" name="chest" placeholder=" " {% if i.patient_chest != '0' %} value="{{i.patient_chest}}" {%endif%}  style="margin-right:1% ;font-size: 16px;">
                             <label for="chest">Chest</label>
                           </div>
                         </div>
                         <div class="col-md-6 mb-2">
                           <div class="form-floating">
-                            <textarea id="inputField" class="form-control form-control-sm me-2" name="ecg" placeholder=" " required style="margin-right: 1%; font-size: 16px;">{{ i.patient_ecg }}</textarea>
+                            <textarea id="inputField" class="form-control form-control-sm me-2" name="ecg" placeholder=" " style="margin-right: 1%; font-size: 16px;">{% if i.patient_ecg != '0' %}{{ i.patient_ecg }}{%endif%}</textarea>
                               <label for="ecg">ECG</label>
                           </div>
                         </div>        
@@ -395,7 +405,7 @@
               <div class="row">
                   <div class="col ">
                     <div class="d-flex justify-content-between">
-                      <label for="Name" class="col-sm-8 col-form-label times-new-roman fw-bold" style="font-size:20px;">Complaint</label>
+                      <label for="Name" class="col-sm-8 col-form-label times-new-roman fw-bold" style="font-size:20px;">Complaint{% if not symptoms_data  %}<span style="color: red; font-weight: bold; font-size: 1em;">*</span>{%endif%}</label>
                       
                     </div>
                   </div>
@@ -415,7 +425,7 @@
               <div class="row">
                   <div class="col ">
                     <div class="d-flex justify-content-between">
-                      <label for="Name" class="col-sm-8 col-form-label times-new-roman fw-bold" style="font-size:20px;">Diagnosis</label>
+                      <label for="Name" class="col-sm-8 col-form-label times-new-roman fw-bold" style="font-size:20px;">Diagnosis{% if not symptoms_data  %}<span style="color: red; font-weight: bold; font-size: 1em;">*</span>{%endif%}</label>
                       
                     </div>
                   </div>
@@ -436,7 +446,7 @@
                       <!-- {{kco}} -->
                       <div class="d-flex justify-content-between mb-2">
                           <label for="" class="fw-bold times-new-roman" style="margin-right:2%;font-size: 20px;">KCO</label>
-                          <select class="form-control search form-select" id="kco" required  onchange="UpdateKCOTextArea()">
+                          <select class="form-control search form-select" id="kco"   onchange="UpdateKCOTextArea()">
                               <option value="Kco" disabled selected hidden>None</option>
                               <option value="clear">Clear</option>
                              
@@ -448,7 +458,7 @@
                   </div>
                   <div class="col-12">
                       <div class="form-group">
-                          <textarea type="text" name="kco" style="height: 50px;" id="selectedKCOTextArea" placeholder="display selected options here" class="form-control" rows="4" required >{{symptoms_data.kco}}</textarea>
+                          <textarea type="text" name="kco" style="height: 50px;" id="selectedKCOTextArea" placeholder="display selected options here" class="form-control" rows="4"  >{%if symptoms_data.kco%}{{symptoms_data.kco}}{%endif%}</textarea>
                       </div>
                   </div>
               </div>
@@ -464,7 +474,7 @@
               <div class="col-12 mb-2">
                 <div class="d-flex justify-content-between mb-2">
                   <label for="" class="  fw-bold times-new-roman" style="margin-right:2% ;font-size: 20px;">Advice</label>
-                  <select class="form-control search form-select" name="advice" id="advice"  required  onchange="updateAdviceTextArea()" >
+                  <select class="form-control search form-select" name="advice" id="advice"   onchange="updateAdviceTextArea()" >
                     <option value="Adv" disabled selected hidden>Advice</option>
                     <option value="clear">Clear</option>
                     {% for a in advice %}
@@ -476,7 +486,7 @@
               </div>
               <div class="col-12">
                   <div class="form-group">
-                      <textarea type="text" name="advice" style="height: 50px;" placeholder="Display here selected options" class="form-control" id="selectedAdviceTextArea" rows="4" required>{{symptoms_data.advice}}</textarea>
+                      <textarea type="text" name="advice" style="height: 50px;" placeholder="Display here selected options" class="form-control" id="selectedAdviceTextArea" rows="4">{%if symptoms_data.advice%}{{symptoms_data.advice}}{%endif%}</textarea>
                   </div>
               </div>
           </div>
@@ -492,7 +502,7 @@
                     </div>
                     <div class="col-6">
                       <div class="form-group">
-                          <textarea type="text" placeholder="Add Prescription" style="height: 30px;" class="form-control" name="Prescription" rows="4" required>{%if prescription %}{{prescription}}{%endif%}</textarea>
+                          <textarea type="text" placeholder="Add Prescription" style="height: 30px;" class="form-control" name="Prescription" rows="4">{%if prescription and prescription != '0' %}{{prescription}}{%endif%}</textarea>
                       </div>
                     </div>
                 </div>
@@ -692,7 +702,7 @@
             </div>
             <div class="d-flex justify-content-between mb-2">
                 <label for="" class="  fw-bold times-new-roman fs-5" style="margin-right:2% ;" style="font-size:20px;">FollowUp</label>
-                <input type="datetime-local" id="followup_datetime" name="followup_datetime" value="{{consult_data.followup_datetime}}" class="form-control">
+                <input type="datetime-local" id="followup_datetime" name="followup_datetime" value="{%if consult_data.followup_datetime%}{{consult_data.followup_datetime}}{%endif%}" class="form-control">
             </div>
             
           </div>
@@ -750,7 +760,7 @@
         <!-- <button class="btn btn-success" onclick="savePage()">Complete</button> -->
         <button id="completeBtn" class="btn btn-light" style="color:white;background-color: #008373;">Complete</button>
         <button id="printBtn" class="btn btn-light" style="color:white;display: none;background-color: #008373;">Print</button>
-        <button id="paidBtn" class="btn btn-light" style="display: none;color:white;background-color: #008373;">Paid</button>
+        <button id="paidbutton" class="btn btn-light" style="display: none;color:white;background-color: #008373;">Paid</button>
         <div id="pdfViewer"></div>
         {%endif%}
          
@@ -765,6 +775,33 @@
       
       </div>
     </form>
+
+    <!-- Modal Structure -->
+    <div id="paymentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; justify-content: center; align-items: center;">
+      <div style="background: white; padding: 20px; border-radius: 5px; width: 90%; max-width: 400px;">
+          <h4>Payment Details</h4>
+          <form id="paymentForm">
+              <div>
+                  <label>Previous Outstanding:</label>
+                  <input type="number" id="previousOutstanding" value="{{outstanding}}" readonly />
+              </div>
+              <div>
+                  <label>Consultation Fee:</label>
+                  <input type="number" id="consultationFee" value="{{consult_data.consultation_fees}}" readonly />
+              </div>
+              <div>
+                  <label>New Outstanding:</label>
+                  <input type="number" id="newOutstanding"  readonly />
+              </div>
+              <div>
+                  <label>Paid Amount:</label>
+                  <input type="number" id="paymentAmount" required />
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          <button id="closeModal" class="btn btn-secondary">Close</button>
+      </div>
+    </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -878,7 +915,7 @@
                 // Show the Print button
                 document.getElementById('printBtn').style.display = 'block';
                 // Show the Paid button
-                document.getElementById('paidBtn').style.display = 'block';
+                document.getElementById('paidbutton').style.display = 'block';
                 // hide  the complete button
                 document.getElementById('completeBtn').style.display = 'none';
                 // Show the Back to Appointment button
@@ -915,26 +952,6 @@
         }
     });
 
-    document.getElementById('paidBtn').addEventListener('click', function() {
-       // Send AJAX request to backend API to fetch the PDF link
-       event.preventDefault(); 
-       fetch('/DrishtisDesktop/paid/')
-        .then(response => response.json())
-        .then(data => {
-            // Check the response from the server
-            if (data.message === 'Payment successful') {
-                // Display a success message on the page
-                alert('Payment done successfully!');
-            } else {
-                // Display an error message if payment failed
-                alert('Payment failed. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Payment not done');
-        });
-    });
          
 </script>
 
@@ -1144,11 +1161,17 @@
       // Convert height from cm to meters
       height /= 100;
       
-      // Calculate BMI
-      let bmi = (weight / (height * height)).toFixed(2); // Rounded to 2 decimal places
-      
-      // Display BMI in the BMI input field
-      document.getElementById('inputBMI').value = bmi;
+      // Validate weight and height to ensure they have values and are greater than zero
+      if (weight && height > 0) {
+        // Calculate BMI
+        let bmi = (weight / (height * height)).toFixed(2); // Rounded to 2 decimal places
+
+        // Display BMI in the BMI input field
+        document.getElementById('inputBMI').value = bmi;
+      } else {
+        // Clear the BMI input field if values are invalid
+        document.getElementById('inputBMI').value = '';
+      }
   }
   
   // Event listener for input fields
@@ -1213,7 +1236,87 @@
       });
   });
 </script>
- 
+<script>
+  document.getElementById('paidbutton').addEventListener('click', function(event) {
+    // Send AJAX request to backend API to fetch the PDF link
+    event.preventDefault();
+    console.log('paid button clicked');
+    //fetch('/DoctorCollection/paid/')
+    //.then(response => response.json())
+    // Show the modal
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        console.error('Modal not found');
+        return;
+    }
+
+    const previousOutstanding = parseFloat(document.getElementById('previousOutstanding').value) || 0;
+
+    // Get consultation fee (ensure the field name matches your HTML)
+    const consultationFee = parseFloat(document.getElementById('consultationFee').value) || 0;
+
+    // Calculate and set the new outstanding amount
+    document.getElementById('newOutstanding').value = previousOutstanding + consultationFee;
+
+});
+// Close modal
+document.getElementById('closeModal').addEventListener('click', function() {
+    document.getElementById('paymentModal').style.display = 'none';
+});
+
+// Handle form submission
+document.getElementById('paymentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    $('.btn').prop('disabled', true); // able the save button
+    {% comment %} $('#loader').show(); // Show the loader
+    $('#overlay').show(); // Show the overlay to disable the page {% endcomment %}
+    const previousOutstanding = document.getElementById('previousOutstanding').value;
+    const consultationFee = document.getElementById('consultationFee').value;
+    const newOutstanding = document.getElementById('newOutstanding').value;
+    const paidAmount = document.getElementById('paymentAmount').value;
+    console.log(paidAmount);
+    // Pass the data to your server endpoint (adjust URL accordingly)
+    fetch('/DrishtisDesktop/paid/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            previous_outstanding: previousOutstanding,
+            consultation_fee: consultationFee,
+            new_outstanding: newOutstanding,
+            paid_amount: paidAmount,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Check the response from the server
+        if (data.message === 'Payment successful') {
+            // Display a success message on the page
+            alert('Payment done successfully!');
+            document.getElementById('paymentModal').style.display = 'none';
+            $('.btn').prop('disabled', false); // able the save button
+            {% comment %} $('#loader').hide(); 
+            $('#overlay').hide();  {% endcomment %}
+        } else {
+            // Display an error message if payment failed
+            alert('Payment failed. Please try again.');
+            $('.btn').prop('disabled', false); // able the save button
+            {% comment %} $('#loader').hide(); 
+            $('#overlay').hide();  {% endcomment %}
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Payment not done');
+        $('.btn').prop('disabled', false); // able the save button
+        {% comment %} $('#loader').hide(); 
+        $('#overlay').hide();  {% endcomment %}
+    });
+});
+</script>
  
 </body>
 </html>

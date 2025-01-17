@@ -211,13 +211,13 @@
         <div class="row">
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" name="latitude" value="{{data.location_latitute}}" placeholder="Latitude" required>
+                    <input type="text" class="form-control" name="latitude" value="{%if data.location_latitute%} {{data.location_latitute}} {%endif%}" placeholder="Latitude">
                     <label for="latitude">Latitude</label>
                 </div>
             </div>
             <div class="col-md-6 col-6 mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" name="longitude" value="{{data.location_longitute}}"  placeholder="Longitude" required>
+                    <input type="text" class="form-control" name="longitude" value="{%if data.location_longitute%} {{data.location_longitute}} {%endif%}"  placeholder="Longitude">
                     <label for="longitude">Longitude</label>
                 </div>
             </div>

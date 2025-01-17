@@ -423,7 +423,7 @@
                     }
                     
                     if( page == 'for_user'){
-                        initializePaymentScripts();
+                        //initializePaymentScripts();
                     }
                      
                      
@@ -597,36 +597,86 @@
 
     }
 
-    function initializePaymentScripts() {
+    {% comment %} function initializePaymentScripts() {
         // Get the paidBtn element
-        var paidBtn = document.getElementById('paidBtn');
+        var paidBtn = document.getElementById('paidbutton');
 
         // Check if the paidBtn element exists
-        if (paidBtn) {
-            // Add an event listener to the paidBtn button
-            paidBtn.addEventListener('click', function() {
-                // Send AJAX request to backend API to fetch the PDF link
-                fetch('/DrishtisDesktop/paid/')
-                    .then(response => response.json())
-                    .then(data => {
-                        // Check the response from the server
-                        if (data.message === 'Payment successful') {
-                            // Display a success message on the page
-                            alert('Payment done successfully!');
-                            // Redirect to the appointment screen
-                            window.location.href = '{% url "get_all_doctor_appointments" %}';
-                        } else {
-                            // Display an error message if payment failed
-                            alert('Payment failed. Please try again.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Payment done');
-                    });
-            });
-        }
-    }
+        if (paidBtn) 
+                document.getElementById('paidbutton').addEventListener('click', function(event) {
+                  // Send AJAX request to backend API to fetch the PDF link
+                  event.preventDefault();
+                  console.log('paid button clicked');
+                  //fetch('/DoctorCollection/paid/')
+                  //.then(response => response.json())
+                  // Show the modal
+                  const modal = document.getElementById('paymentModal');
+                  if (modal) {
+                      modal.style.display = 'flex';
+                  } else {
+                      console.error('Modal not found');
+                      return;
+                  }
+              
+                  const previousOutstanding = parseFloat(document.getElementById('previousOutstanding').value) || 0;
+              
+                  // Get consultation fee (ensure the field name matches your HTML)
+                  const consultationFee = parseFloat(document.getElementById('consultationFee').value) || 0;
+              
+                  // Calculate and set the new outstanding amount
+                  document.getElementById('newOutstanding').value = previousOutstanding + consultationFee;
+              
+              });
+              // Close modal
+              document.getElementById('closeModal').addEventListener('click', function() {
+                  document.getElementById('paymentModal').style.display = 'none';
+              });
+              
+              // Handle form submission
+              document.getElementById('paymentForm').addEventListener('submit', function(event) {
+                  event.preventDefault();
+                  $('.btn').prop('disabled', true); // able the save button
+                  const previousOutstanding = document.getElementById('previousOutstanding').value;
+                  const consultationFee = document.getElementById('consultationFee').value;
+                  const newOutstanding = document.getElementById('newOutstanding').value;
+                  const paidAmount = document.getElementById('paidAmount').value;
+              
+                  // Pass the data to your server endpoint (adjust URL accordingly)
+                  fetch('/DrishtisDesktop/paid/', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          previous_outstanding: previousOutstanding,
+                          consultation_fee: consultationFee,
+                          new_outstanding: newOutstanding,
+                          paid_amount: paidAmount,
+                      }),
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      // Check the response from the server
+                      if (data.message === 'Payment successful') {
+                          // Display a success message on the page
+                          alert('Payment done successfully!');
+                          document.getElementById('paymentModal').style.display = 'none';
+                          $('.btn').prop('disabled', false); // able the save button
+                          // Redirect to the appointment screen
+                          window.location.href = '{% url "get_all_doctor_appointments" %}';
+                      } else {
+                          // Display an error message if payment failed
+                          alert('Payment failed. Please try again.');
+                          $('.btn').prop('disabled', false); // able the save button
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Payment not done');
+                      $('.btn').prop('disabled', false); // able the save button 
+                  });
+              });
+        } {% endcomment %}
 
         // Define handleInfoIconClick function in a global scope
         const handleInfoIconClick = (event) => {
