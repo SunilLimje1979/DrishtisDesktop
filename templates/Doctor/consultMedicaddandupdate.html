@@ -16,7 +16,7 @@
         }
 
         .form-container {
-            margin-top: 20px;
+            margin-top: 3px;
             padding: 10px;
         }
 
@@ -64,6 +64,15 @@
             width: 100%;
             padding: 2px;
         }
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
     </style>
 </head>
 
@@ -73,7 +82,7 @@
     <form class="container form-container" method="POST" action="{% url 'consultfee' %}">
         {% csrf_token %}
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-light navbar-orange fixed-top" style="margin-left: 320px;">
+        {% comment %} <nav class="navbar navbar-expand-lg navbar-light navbar-orange fixed-top" style="margin-left: 320px;">
             <input type="hidden" name="consult_id" value="{{ consult_id }}">
             <div class="container-fluid pl-3">
                 {% if consult_id %}
@@ -83,7 +92,17 @@
                 {% endif %}
                  
             </div>
-        </nav>
+        </nav> {% endcomment %}
+        <div class="data-block1">
+            <input type="hidden" name="consult_id" value="{{ consult_id }}">
+            <div class="container-fluid pl-3">
+                {% if consult_id %}
+                    <span class="navbar-brand1">Edit Fees</span>
+                {% else %}
+                    <span class="navbar-brand1">Add Fees</span>
+                {% endif %}
+            </div>
+        </div>
         {% include "includes/message.html" %}
         <!-- Fees Table -->
         <table class="fees-table">

@@ -15,6 +15,7 @@
         body {
             background-color: #f8f9fa;
             font-family: 'Poppins', sans-serif;
+            style="overflow-x: hidden;"
         }
 
         .navbar-orange {
@@ -33,16 +34,9 @@
             color: #fff;
         }
 
-        /* .patient-card {
-            background-color: #71d4c895;
-            border-radius: 10px;
-            margin-top: 10px;
-            padding: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-        } */
+        
 
-        .patient-card {
+        {% comment %} .patient-card {
             background-color: #71d4c895;
             border-radius: 10px;
             margin-top: 5px;
@@ -51,7 +45,8 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-        }
+        } {% endcomment %}
+        
 
         .patient-label {
             font-size: 16px;
@@ -120,14 +115,76 @@
         .row .form-control{
             font-size: 16px;
         }
+
+        .patient-card {
+            width: 100%; /* Ensure full width */
+            position: relative; /* Allows absolute positioning inside */
+            display: flex;
+            flex-direction: column; /* Stack name & icons properly */
+            padding: 5px 4px; /* Increased padding for more space inside the card */
+            margin-bottom: 10px; /* Increased margin for better spacing between cards */
+            background-color: white;
+            border-radius: 8px; /* Slightly more rounded corners */
+            border: 1px solid #a0c3a9; /* Added a colored border */
+            /* Enhanced shadow effect */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+        }
+        
+        .actions-container {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        
+        
+        .actions-container a {
+            text-decoration: none;
+        }
+        
+        .actions-container i {
+            font-size: 18px;
+            color: rgb(13, 173, 236);
+        }
+        
+
+        /* Loader styles */
+        #loader {
+             position: fixed;
+             left: 30%;
+             top: 55%;
+             transform: translate(-50%, -50%);
+             border: 16px solid #f3f3f3;
+             border-radius: 50%;
+             border-top: 16px solid #3498db;
+             width: 120px;
+             height: 120px;
+             -webkit-animation: spin 2s linear infinite;
+             animation: spin 2s linear infinite;
+             display: none;
+             z-index: 1000;
+         }
+ 
+         @-webkit-keyframes spin {
+             0% { -webkit-transform: rotate(0deg); }
+             100% { -webkit-transform: rotate(360deg); }
+         }
+ 
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
-
+    <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;"></div>
+    <div id="loader"></div>
     <div class="flex-container">
         <!-- Patient List -->
-        <div class="patient-list">
+        <div class="patient-list" style="overflow-x: hidden;">
             <div class="data-block1">
                 <div class="container-fluid">
                     <span class="navbar-brand1">All Patient</span>
@@ -145,7 +202,7 @@
             </div>
 
             <!-- Patient Cards -->
-            {% for patient in all_data %}
+            {% comment %} {% for patient in all_data %}
             <div class="patient-card" data-patient-id="{{ patient.patient_id }}">
                 <div class="row">
                     <div class="col-md-12">
@@ -155,11 +212,100 @@
                             </div>
                             <div class="patient-label">{{ patient.patient_firstname }} {{ patient.patient_lastname }}</div>
                             <div class="patient-label" style="margin-left: 30px;"><i class="fa-solid fa-indian-rupee-sign"></i>{% if patient.outstanding %} {{ patient.outstanding }} {%else%} 0 {%endif%}</div>
+                            <div class="actions-container d-flex align-items-center justify-content-between mt-2 ms-4">
+                                <div>
+                                    <a href="{% url 'bookappointment_onthe_spot' patient.patient_id %}" 
+                                    style="margin:0;" 
+                                    onclick="return confirmBooking(event, this, '{{ patient.patient_firstname }}', '{{ patient.patient_lastname }}');">
+                                    <i class="fa-solid fa-stethoscope" style="font-size: 18px; color:rgb(13, 173, 236);"></i>
+                                    </a>
+    
+                                </div>
+    
+                                {% if patient.family_members %}
+                                    <!-- Toggle Family Members using Icon -->
+                                    <a href="#" data-bs-toggle="collapse" data-bs-target="#family_{{ patient.patient_id }}">
+                                        <i class="fa-solid fa-user-group" style="font-size: 18px; color:rgb(13, 173, 236);"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endfor %} {% endcomment %}
+            {% for patient in all_data %}
+                <div class="patient-card" data-patient-id="{{ patient.patient_id }}">
+                    <div class="row">
+                        <div class="col-12">
+                            <!-- First Row: Mobile Number & Outstanding -->
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="patient-info">
+                                    {{ patient.patient_mobileno }}  
+                                </div>
+                                <div class="patient-label">
+                                    &#8377;{% if patient.outstanding %} {{ patient.outstanding }} {% else %} 0 {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Second Row: Name -->
+                            <div class="patientname mt-1">
+                                {{ patient.patient_firstname }} {% if patient.patient_fateherhusbandname  %} {{ patient.patient_fateherhusbandname }} {%endif%} {{ patient.patient_lastname}}
+                            </div>
+
+                            <!-- Icons: Stethoscope & Family Members -->
+                            <div class="actions-container d-flex align-items-center justify-content-between mt-3">
+                                <a href="{% url 'bookappointment_onthe_spot' patient.patient_id %}" 
+                                    onclick="return confirmBooking(event, this, '{{ patient.patient_firstname }}', '{{ patient.patient_lastname }}');">
+                                    <i class="fa-solid fa-stethoscope"></i>
+                                </a>
+
+                                {% if patient.family_members %}
+                                    <a href="#" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#family_{{ patient.patient_id }}" 
+                                        onclick="toggleFamilyMembers(event, this);">
+                                        <i class="fa-solid fa-user-group"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if patient.family_members %}
+                    <!-- Family Members Section -->
+                    <div id="family_{{ patient.patient_id }}" class="collapse family-section">
+                        {% for member in patient.family_members %}
+                            <div class="patient-card family-card" data-patient-id="{{ member.patient_id }}">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="patient-label">{{ member.patient_firstname }} {{ member.patient_lastname }}</div>
+                                            <div class="patient-info">&#8377;{% if member.outstanding %} {{ member.outstanding }} {% else %} 0 {% endif %}</div>
+                                            <div class="patient-info">
+                                                <a href="{% url 'bookappointment_onthe_spot' member.patient_id %}" 
+                                                    onclick="return confirmBooking(event, this, '{{ member.patient_firstname }}', '{{ member.patient_lastname }}');">
+                                                    <i class="fa-solid fa-stethoscope" style="font-size: 18px;color: rgb(13, 173, 236);"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        {% comment %} <div class="actions-container d-flex align-items-center justify-content-between mt-1 ">
+                                            <a href="#" 
+                                                onclick="return confirmBooking(event, this, '{{ member.patient_firstname }}', '{{ member.patient_lastname }}');">
+                                                <i class="fa-solid fa-stethoscope"></i>
+                                            </a>
+                                        </div> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             {% endfor %}
+
+
         </div>
 
         <!-- Add Patient Form Container -->
@@ -169,6 +315,11 @@
 
         <!-- Update Patient Form Container -->
         <div class="form-container" id="updatePatientFormContainer" style="display: none;">
+            <!-- Content will be loaded dynamically here -->
+        </div>
+
+        <!-- Appointment book and proceed further Form Container -->
+        <div class="form-container" id="appointmentFormContainer" style="display: none;">
             <!-- Content will be loaded dynamically here -->
         </div>
     </div>
@@ -182,22 +333,6 @@
 
     <!-- JavaScript code -->
     <script>
-        // Search functionality for patient list
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchValue = this.value.toLowerCase();
-            const patientCards = document.querySelectorAll('.patient-card');
-    
-            patientCards.forEach(function(card) {
-                const nameText = card.querySelector('.patient-label').textContent.toLowerCase();
-                const mobileText = card.querySelector('.patient-info').textContent.toLowerCase();
-                if (nameText.includes(searchValue) || mobileText.includes(searchValue)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    
         // Function to initialize event listeners on dynamically loaded content
         function initializeEventListeners() {
             // Attach click event listener to each patient card
@@ -380,6 +515,147 @@
 
     </script>
 
+    
+    <script>
+        function confirmBooking(event, element, firstName, lastName) {
+            event.preventDefault(); // Prevent default behavior
+            event.stopPropagation(); // Stop event propagation
+        
+            let message = `Do you want to book an appointment for ${firstName} ${lastName} and proceed further for consultation?`;
+        
+            if (confirm(message)) {
+                $('#loader').show(); // Show the loader
+                $('#overlay').show(); // Show the overlay to disable the page
+                const updateFormContainer = document.getElementById('updatePatientFormContainer');
+                const addUserContainer = document.getElementById('addPatientPageContainer');
+                // Hide the add user container if it's visible
+                addUserContainer.style.display = 'none';
+                addUserContainer.innerHTML = '';
+                updateFormContainer.style.display = 'none';
+                updateFormContainer.innerHTML = '';
+                let url = element.href; // Get the URL from the anchor tag
+        
+                fetch(url, { method: 'GET' }) // Change to 'POST' if needed
+                    .then(response => response.text())
+                    .then(html => {
+                        let appointmentFormContainer = document.getElementById('appointmentFormContainer'); // Ensure this container exists in your HTML
+                        appointmentFormContainer.innerHTML = html;
+                        appointmentFormContainer.style.display = 'block';
+        
+                        // Check subscription status and handle modal
+                        var subscriptionStatus = '{{ request.session.subscription_status }}'; // Replace with actual status from backend
+                        if (subscriptionStatus === 'inactive') {
+                            var subscriptionModal = new bootstrap.Modal(document.getElementById('subscriptionModal'), {
+                                backdrop: 'static',
+                                keyboard: false
+                            });
+                            subscriptionModal.show();
+                            $('.btn-save').prop('disabled', true); // Disable the save button
+                            $('#SaveButton').prop('disabled', true); // Disable the save button
+                            $('.btn-light').prop('disabled', true);
+                        }
+                        // Find and execute scripts in the fetched HTML
+                        const scriptTags = appointmentFormContainer.getElementsByTagName('script');
+                        for (let script of scriptTags) {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        }
+        
+                        // Reinitialize event listeners on the newly loaded content
+                        //initializeFormEventListeners();
+        
+                        // Hide loader after the request completes
+                        $('#loader').hide();
+                        $('#overlay').hide();
+                    })
+                    .catch(error => {
+                        console.error('Error loading inital assesment form:', error);
+                        $('#loader').hide();
+                        $('#overlay').hide();
+                        alert("Failed to book the appointment. Please try again.");
+                    });
+            }
+            return false; // Prevent the default anchor action
+        }
+        
+    </script>
+    <script>
+        function toggleFamilyMembers(event, element) {
+            event.preventDefault();  
+            event.stopPropagation(); 
+        
+            let target = element.getAttribute("data-bs-target");
+            let section = document.querySelector(target);
+        
+            if (section.classList.contains("show")) {
+                // If already open, close it properly
+                section.classList.remove("show");
+                element.classList.remove("active");
+            } else {
+                // Open only the clicked one and close others
+                document.querySelectorAll(".family-section.show").forEach(openSection => {
+                    openSection.classList.remove("show");
+                });
+        
+                section.classList.add("show");
+                element.classList.add("active");
+            }
+        }           
+    </script>
+    <script>
+        
+            document.getElementById('searchInput').addEventListener('input', function () {
+                const searchValue = this.value.toLowerCase().trim();
+                const searchWords = searchValue.split(/\s+/); // Split input into words
+                const patientCards = document.querySelectorAll('.patient-card');
+        
+                patientCards.forEach(function (card) {
+                    const nameElement = card.querySelector('.patientname');  // Main Patient Name
+                    const mobileElement = card.querySelector('.patient-info');  // Mobile Number
+                    const familySection = card.nextElementSibling; // Family members section (collapse div)
+                    const familyMemberElements = familySection ? familySection.querySelectorAll('.patient-label') : []; // Family Member Names
+        
+                    const nameText = nameElement ? nameElement.textContent.toLowerCase() : '';  
+                    const mobileText = mobileElement ? mobileElement.textContent.toLowerCase() : '';
+                    let familyMemberText = '';
+        
+                    // Collect all family member names inside a single string
+                    familyMemberElements.forEach(member => {
+                        familyMemberText += member.textContent.toLowerCase() + ' ';
+                    });
+        
+                    // Check if any search word matches name, mobile, or family member names
+                    const matchesSearch = searchWords.every(word => 
+                        nameText.includes(word) || 
+                        mobileText.includes(word) || 
+                        familyMemberText.includes(word)
+                    );
+        
+                    if (matchesSearch) {
+                        card.classList.remove('d-none'); // Show main patient card
+                    } else {
+                        card.classList.add('d-none'); // Hide non-matching cards
+                    }
+                });
+        
+                // **Fix Bootstrap Collapse Toggle Issue**
+                document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(toggle => {
+                    let targetId = toggle.getAttribute('data-bs-target');
+                    let collapseElement = document.querySelector(targetId);
+                    
+                    if (collapseElement) {
+                        let bsCollapse = new bootstrap.Collapse(collapseElement, { toggle: false });
+                        
+                        // Reset collapse state if search is cleared
+                        if (!searchValue) {
+                            bsCollapse.hide();
+                        }
+                    }
+                });
+            });
+        </script> 
+    
     
 
 {% endblock %}

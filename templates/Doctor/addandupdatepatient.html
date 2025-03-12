@@ -146,7 +146,7 @@
 <div id="response-container">
     <div id="loader"></div>
   
-    <form class="container form-container" {% if patient  %}action="{% url 'update_patient' patient.patient_id %}"{% else %}action="{% url 'addpatient' %}"{% endif %} method="Post" id="adduppatient">
+    <form class="container form-container" style="overflow-x: hidden;" {% if patient  %}action="{% url 'update_patient' patient.patient_id %}"{% else %}action="{% url 'addpatient' %}"{% endif %} method="Post" id="adduppatient">
         {% csrf_token %}
         
         <div class="data-block2 mb-4">

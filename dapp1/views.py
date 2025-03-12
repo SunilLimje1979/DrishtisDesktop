@@ -589,7 +589,7 @@ def consultaion_fee(request):
                 medic_data[i]=response.json().get("message_data",{})
                 consult_id+=1
                 medic_id+=1
-            return render(request,"Doctor/consultMedicaddandupdate.html",{"consult_data":consult_data,"medic_data":medic_data,'consult_id':consult_id-4})
+            return render(request,"Doctor/consultMedicaddandupdate.html",{"consult_data":consult_data,"medic_data":medic_data,'consult_id':consult_id})
         else:
             request.session['consult_id']=None
             request.session['medic_id']=None
@@ -1171,7 +1171,10 @@ def delete_lab_report(request,investigation_id):
 #####################Appointments##############################
 
 def get_all_doctor_appointments(request):
-    return render(request,'Doctor/appointments.html',{'role':request.session['role']})
+    if 'doctor_id' in request.session:
+        return render(request,'Doctor/appointments.html',{'role':request.session['role']})
+    else:
+        return redirect(login)
 
 
 @csrf_protect
@@ -3665,11 +3668,30 @@ def update_instruction(request,id):
 
 ###############################Patient Tab flow########################################       
 def all_patient(request):
-    patient_url="https://drishtis.app/drishti_pateint/api/get_patients_by_doctor_id/"
-    patient_res=requests.post(patient_url,json={"doctor_id":request.session['doctor_id']})
-    # print(patient_res.text)
-    all_data=patient_res.json().get('message_data')
-    return render(request,'Doctor/all_patient.html',{'all_data':all_data})
+    if('doctor_id' in request.session):
+        patient_url="https://drishtis.app/drishti_pateint/api/get_patients_by_doctor_id/"
+        patient_res=requests.post(patient_url,json={"doctor_id":request.session['doctor_id']})
+        # print(patient_res.text)
+        all_data=patient_res.json().get('message_data')
+        for data in all_data:
+            family_members=[]
+            if(data['follower']== 0 or data['follower'] is None):
+                for  i in range(len(all_data)):
+                    if(data['patient_id']==all_data[i]['patient_id']):
+                        continue
+                    else:
+                        if(data['patient_mobileno']==all_data[i]['patient_mobileno']):
+                            print(data)
+                            data['outstanding'] = (data['outstanding'] if data['outstanding'] else 0) + (all_data[i]['outstanding'] if all_data[i]['outstanding'] else 0)
+                            family_members.append(all_data[i])
+            if(family_members):
+                data['family_members']=family_members
+                for member in family_members:
+                    all_data.remove(member)
+
+        return render(request,'Doctor/all_patient.html',{'all_data':all_data})
+    else:
+        return redirect(login)
 
 
 def addPatient(request):
@@ -5946,8 +5968,190 @@ def daycarepayment(request):
         #return HttpResponse("else part of 5525")        
 
 
+def bookappointment_onthe_spot(request,id):
+    if('doctor_id' in request.session):
+        print(id)
+        url="https://drishtis.app/drishti_pateint/api/get_patient_byid/"
+        res=requests.post(url,json={"patient_id":id})
+        if(res.json().get('message_code')==1000):
+            user = res.json().get('message_data')
+            full_name = user.get('patient_firstname', '')
 
+            if user.get('patient_fateherhusbandname') and user.get('patient_fateherhusbandname') != "None":
+                full_name += " " + user['patient_fateherhusbandname']
+
+            if user.get('patient_lastname') and user.get('patient_lastname') != "None":
+                full_name += " " + user['patient_lastname']
+            
+            #age
+            epoch_timestamp = user.get('patient_dateofbirth', 0)
+            # print(epoch_timestamp)
+            if(epoch_timestamp):
+                formatted_date=datetime.datetime.fromtimestamp(epoch_timestamp).strftime( "%d-%m-%Y") 
+                dob = datetime.datetime.strptime(formatted_date, '%d-%m-%Y').date()   
+                # Calculate the age
+                today = datetime.datetime.today().date()
+                age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day)) 
+
+            # Create a dictionary with the appointment data
+            current_datetime = datetime.datetime.now()
+            # Format the date and time as "YYYY-MM-DD HH:MM:SS"
+            date_time_str = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            appointment_data = {
+                'doctor_id': request.session['doctor_id'],
+                'appointment_mobileno': user.get('patient_mobileno'),
+                'appointment_name': full_name,
+                'appointment_datetime': date_time_str,
+                'appointment_status': 1,
+                'appointment_gender':'Male' if user.get('patient_gender')== 0 else 'Female',
+            }
+            if(epoch_timestamp):
+                appointment_data['age']=age
+
+            print(appointment_data)
+            appointment_response = requests.post("https://drishtis.app/drishti_appointment/api/insert_appointment_data/",json=appointment_data)
+            print(appointment_response.text)
+            if appointment_response.json().get('message_code') == 1000:
+                appointment_id=(appointment_response.json().get('message_data')).get('appointment_id')
+                # print(appointment_id)
+                api_data = {"appointment_id":appointment_id}
+                api_url ='https://drishtis.app/drishti_appointment/api/get_patient_by_appointment_id/'
+                response = requests.post(api_url, json=api_data)
+                print(response.text)
+                if response.json().get('message_code') == 1000:
+                    epoch_timestamp = user.get('patient_dateofbirth', 0)
+                    # print(epoch_timestamp)
+                    # formatted_date = datetime.utcfromtimestamp(epoch_timestamp).strftime('%Y-%m-%d')
+                    formatted_date=datetime.datetime.fromtimestamp(epoch_timestamp).strftime( "%Y-%m-%d")   
+                    print(formatted_date)
+                    
+                    data = response.json().get('message_data')
+                    data2=data.get('appointment details', {})
+                    data2['patient_id']=id
+                    data2['dob'] = formatted_date
+                    data2['aadharnumber']=user.get('patient_aadharnumber', 0)
+                    data2['health_id']=user.get('patient_universalhealthid', 0)
+                    data2['outstanding']=0
+                    # print(data2)
+                    return render(request, 'Doctor/initial_assesment.html',{"data1":data2,'pain_scale_range': range(1, 11),'role':request.session['role']})
         
+            else:
+                messages.error(request, 'Appointment booking failed please try again or contact support team!')
+                return redirect(all_patient)
+            
+        return HttpResponse("ok")
+    
+#################################SOS members (Emergency Group Doctor)######################
+def sos_group(request):
+    if('doctor_id' in request.session):
+        res = requests.post('https://drishtis.app/drishti_doctor/api/get_emergency_group_doctors/',json={'doctor_id':request.session['doctor_id']})
+        if(res.json().get('message_code')==1000):
+            all_sos_members= res.json().get('message_data')
+        else:
+            messages.error(request,"No SOS members is Added...")
+            all_sos_members=0
+        return render(request,'Doctor/all_sosgroup_members.html',{'all_sos_members':all_sos_members})
+    
+    else:
+        return redirect(login)
+    
+
+def add_sos_member(request):
+    if('doctor_id' in request.session):
+        if(request.method=='GET'):
+            return render(request,"Doctor/addandupdate_sos_member.html")
+        
+        else:
+            api_data = {
+            "doctor_id":request.session['doctor_id'],
+            "doctor_name":request.POST['doctor_name'],
+            "doctor_mobileno":request.POST["doctor_mobileno"]
+            }
+            api_url= f"https://drishtis.app/drishti_doctor/api/insert_emergency_group_doctor/"
+            response = requests.post(api_url,json=api_data)
+            print(response.text)
+            if(response.json().get('message_code')==1000):
+                messages.success(request, 'SOS Member Added successfully!')
+            else:
+                messages.success(request, response.json().get('message_text'))
+   
+            return redirect(sos_group)
+        
+    else:
+        return redirect(login)
+
+def update_sos_member(request,emergency_groupdoctor_id):
+    if(request.method=="GET"):
+        res = requests.post('https://drishtis.app/drishti_doctor/api/get_emergency_group_doctors/',json={'emergency_groupdoctor_id':emergency_groupdoctor_id})
+        if(res.json().get('message_code')==1000):
+            member= (res.json().get('message_data'))[0]
+            return render(request,'Doctor/addandupdate_sos_member.html',{'member':member})
+        else:
+            messages.error(request,res.json().get('message_text'))
+            return redirect(sos_group)
+    
+    else:
+        api_data = { 
+                  "emergency_groupdoctor_id":emergency_groupdoctor_id,
+                  "doctor_name":request.POST['doctor_name'],
+                  "doctor_mobileno":request.POST["doctor_mobileno"]
+                }
+        api_url = f"https://drishtis.app/drishti_doctor/api/update_emergency_group_doctor/"
+        response = requests.post(api_url,json=api_data)
+        print(response.text)
+        if(response.json().get('message_code')==1000):
+            messages.success(request, 'SOS member Updated successfully!')
+        else:
+            messages.success(request,response.json().get('message_text'))
+        
+        return redirect(sos_group)
+
+
+def delete_sos_member(request,emergency_groupdoctor_id):
+    if emergency_groupdoctor_id:
+        api_url = f'https://drishtis.app/drishti_doctor/api/delete_emergency_group_doctor/'
+        api_data={'emergency_groupdoctor_id':emergency_groupdoctor_id}
+        response = requests.post(api_url,api_data)
+        print(response.text)
+        if response.json().get('message_code') == 1000:
+            messages.success(request, 'SOS Member Deleted successfully!')
+                   
+        else:
+            messages.error(request,response.json().get('message_text'))
+
+        return redirect(sos_group)
+    else:
+        return  HttpResponse("Id is Invalid......")
+
+
+@csrf_exempt  # Remove this if using CSRF token in AJAX
+def send_support_message(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            appointment_id = data.get("appointment_id")
+
+            if not appointment_id:
+                return JsonResponse({"success": False, "message": "Invalid appointment ID."})
+
+            print(f"Support request received for Appointment ID: {appointment_id}")
+        
+            if 'doctor_id' in request.session:
+                res=requests.post('https://drishtis.app/drishti_doctor/api/insert_emergency_support_message/',{'doctor_id':request.session['doctor_id'],'appointment_id':appointment_id})
+            # Perform backend logic (e.g., send a message, log an entry)
+            else:
+                redirect(login)
+
+            print(res.text)
+            if(res.json().get('message_code')==1000):
+                return JsonResponse({"success": True, "message": "Message sent successfully!"})
+            
+            else:  
+                return JsonResponse({"success": False, "message":res.json().get('message_text')})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)})
+
+    return JsonResponse({"success": False, "message": "Invalid request method."})
 
 
 

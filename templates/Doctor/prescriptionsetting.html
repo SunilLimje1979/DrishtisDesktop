@@ -16,7 +16,6 @@
         }
 
         .form-container {
-            margin-top: 20px;
             padding: 10px;
         }
 
@@ -53,6 +52,16 @@
         .form-group{
             margin-bottom: 20px;
         }
+        .data-block1 {
+            border: 1px solid #ddd;
+            padding: 7px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #109787;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -62,12 +71,18 @@
     <form class="container form-container" method="POST" {%if prescription_settings %} action="{% url 'update_prescription_setting' %}" {%else%} action="{% url 'prescription_setting' %}" {%endif%} enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-light navbar-orange fixed-top" style="margin-left: 320px;">
+        {% comment %} <nav class="navbar navbar-expand-lg navbar-light navbar-orange fixed-top" style="margin-left: 320px;">
             <input type="hidden" name="prescription_id" value="{{ prescription_id }}">
             <div class="container-fluid pl-3">
                 <span class="navbar-brand1">Print Format</span>
             </div>
-        </nav>
+        </nav> {% endcomment %}
+        <div class="data-block1">
+            <input type="hidden" name="prescription_id" value="{{ prescription_id }}">
+            <div class="container-fluid pl-3">
+                <span class="navbar-brand1">Print Format</span>
+            </div>
+        </div>
         {% include "includes/message.html" %}
         <!-- Paper Size Dropdown -->
         <div class="form-group">

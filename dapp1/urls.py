@@ -87,5 +87,11 @@ urlpatterns = [
    path('get_unpaid_bills/',get_unpaid_bills,name='get_unpaid_bills'),
    path('daycarebillpdf/<int:consultationid>/',daycarebillpdf,name='daycarebillpdf'),
    path('daycarepayment/',daycarepayment,name='daycarepayment'),
+   path("bookappointment_onthe_spot/<int:id>",bookappointment_onthe_spot,name='bookappointment_onthe_spot'),
+   path('sos_group/' , sos_group , name='sos_group'),
+   path("add_sos_member/",add_sos_member,name='add_sos_member'),
+   path("update_sos_member/<int:emergency_groupdoctor_id>/",update_sos_member,name='update_sos_member'),
+   path("delete_sos_member/<int:emergency_groupdoctor_id>/",delete_sos_member,name='delete_sos_member'),
+   path('send_support_message/',send_support_message,name='send_support_message'),
 
 ]

@@ -78,9 +78,17 @@
         font-size: 50px; /* Adjust the font size as needed */
         }
         .data-item{
-            background-color: #b2f5ee;
+            {% comment %} background-color: #b2f5ee;
             border-radius: 10px;
-            color: black;
+            color: black; {% endcomment %}
+            background-color:white;
+            color:black;
+            border-radius: 9px;
+            border: 1px solid #a0c3a9; /* Added a colored border */
+            margin-bottom: 7px;
+            margin-top:5px;
+            /* Enhanced shadow effect */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
         }
          /* Custom CSS for Appointment Statistics */
         .card-body {
@@ -184,7 +192,7 @@
     <div id="loader"></div>
     <div class="flex-container">
         <!-- Appointment List -->
-        <div class="appointment-list">
+        <div class="appointment-list" style="overflow-x: hidden;">
             <div class="data-block1">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
                     <span class="navbar-brand1">Appointments</span>
@@ -243,7 +251,7 @@
             </div>
         </div>
 
-        <div class="form-container" id="opd" style="display: none;">
+        <div class="form-container" id="opd" style="display: none;overflow-x: hidden;">
             <!-- Content will be loaded dynamically here -->
         </div>
 
@@ -349,7 +357,7 @@
                                  
                                 <div class="data-item" data-status="${appointment.appointment_status}">
                                     <input type="hidden" name="appointment_id" value="${appointment.appointment_id}" />
-                                    <hr>
+
                                     <div class="label-row">
                                         <label for="label1" id="disabledLink" class="label-link"><i class="fa-solid fa-circle-info me-1" style=" font-size: 20px;cursor: pointer;" onclick="handleInfoIconClick(event)" data-appointment-id="${appointment.appointment_id}"></i>${appointment.appointment_name}</label>
                                         <label for="label2" id="disabledLink" class="label-link"><i class="fa-solid fa-user-group" style="color: #008373;"></i> ${appointment.appointment_token}</label>
@@ -360,10 +368,15 @@
                                         ${appointment.appointment_gender !== 0 ? `<label  for="label1"><i class="fa-solid fa-person-dress me-2" style="color: rgb(208, 91, 110); font-size: 30px;"></i></label>` : ''}
                                         ${appointment.appointment_gender === 0 ? `<label  for="label1"><i class="fa-solid fa-person me-2" style="color: blue; font-size: 30px;"></i></label>` : ''}
                                         ${appointment.age ? `<label for="label1">${appointment.age} years</label>` : ''}
+                                        <label for="label2"><i class="fa-solid fa-phone ms-2" style="font-size:18px;"></i>${appointment.appointment_mobileno}</label>
                                         
                                         </div>
                                         <div>
-                                        <label for="label2"><i class="fa-solid fa-phone me-2"></i>${appointment.appointment_mobileno}</label>
+                                            <button class="btn btn-link text-success p-0" style="font-size: 14px;" 
+                                                onclick="handleSupportClick(event)" 
+                                                data-appointment-id="${appointment.appointment_id}">
+                                                Emerg. Team
+                                            </button>
                                         </div>
                                     </div>
                                     
@@ -738,6 +751,44 @@
                         $('#infoContentContainer').html('<p>Error loading content.</p>').show();
                     }
                 });
+            };
+
+            // Define handleSupportClick function
+            const handleSupportClick = (event) => {
+                event.preventDefault(); // Prevent default behavior
+                event.stopPropagation(); // Stop event propagation
+
+                const appointmentId = event.target.dataset.appointmentId; // Get appointment_id
+
+                // Show confirmation dialog before proceeding
+                const confirmSend = confirm("Do you want to send an emergency message?");
+                
+                if (!confirmSend) {
+                    return; // Exit if user selects "No"
+                }
+
+                console.log("Clicked on Support Team for appointment:", appointmentId);
+                $('#loader').show(); // Show the loader
+                $('#overlay').show(); // Show the overlay to disable the page
+                // Send AJAX request to Django view
+                fetch('/DrishtisDesktop/send_support_message/', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" },
+                    body: JSON.stringify({ appointment_id: appointmentId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $('#loader').hide(); // hide the loader
+                        $('#overlay').hide(); // hide the overlay to disable the page
+                        alert("Message sent successfully!");
+                    } else {
+                        $('#loader').hide(); // hide the loader
+                        $('#overlay').hide(); // hide the overlay to disable the page
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
             };
     </script>
 
